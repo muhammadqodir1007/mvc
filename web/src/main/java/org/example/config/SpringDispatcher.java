@@ -21,10 +21,12 @@ public class SpringDispatcher extends AbstractAnnotationConfigDispatcherServletI
     protected String[] getServletMappings() {
         return new String[]{"/"};
     }
+
     @Override
     protected DispatcherServlet createDispatcherServlet(WebApplicationContext servletAppContext) {
         DispatcherServlet ds = new DispatcherServlet(servletAppContext);
         ds.setThrowExceptionIfNoHandlerFound(true);
         return ds;
+
     }
 }

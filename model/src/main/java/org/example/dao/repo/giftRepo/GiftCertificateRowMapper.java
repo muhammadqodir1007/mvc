@@ -12,10 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 @Component
 public class GiftCertificateRowMapper implements ResultSetExtractor<List<GiftCertificate>> {
-
 
 
     @Override
@@ -29,8 +27,8 @@ public class GiftCertificateRowMapper implements ResultSetExtractor<List<GiftCer
             giftCertificate.setDescription(rs.getString("description"));
             giftCertificate.setPrice(rs.getInt("price"));
             giftCertificate.setDuration(rs.getInt("duration"));
-            giftCertificate.setCreateDate(rs.getDate("create_date"));
-            giftCertificate.setLastUpdateDate(rs.getDate("last_update_date"));
+            giftCertificate.setCreateDate(rs.getDate("create_date").toString());
+            giftCertificate.setLastUpdateDate(rs.getDate("last_update_date").toString());
 
             List<Tag> tags = new ArrayList<>();
             while (!rs.isAfterLast() && rs.getInt("id") == giftCertificate.getId()) {

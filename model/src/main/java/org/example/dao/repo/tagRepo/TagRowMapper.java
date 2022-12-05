@@ -3,7 +3,6 @@ package org.example.dao.repo.tagRepo;
 import org.example.entity.Tag;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class TagRowMapper implements ResultSetExtractor<List<Tag>>{
+public class TagRowMapper implements ResultSetExtractor<List<Tag>> {
 
 
     @Override

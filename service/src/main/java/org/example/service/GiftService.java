@@ -1,21 +1,29 @@
 package org.example.service;
 
+import org.example.dao.config.ForDate;
 import org.example.dao.repo.giftRepo.GiftRepo;
 import org.example.dao.repo.tagRepo.TagRepo;
 import org.example.entity.GiftCertificate;
 import org.example.entity.Tag;
+import org.example.exceptions.DaoException;
+import org.example.exceptions.IncorrectParameterException;
+import org.example.validator.GiftCertificateValidator;
+import org.example.validator.IdentifiableValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static org.example.service.FilterParameters.*;
 
 @Service
 public class GiftService {
-
-    final GiftRepo giftRepo;
-
-    final TagRepo tagRepo;
+    final private GiftRepo giftRepo;
+    final private TagRepo tagRepo;
 
     @Autowired
     public GiftService(GiftRepo giftRepo, TagRepo tagRepo) {
@@ -24,111 +32,108 @@ public class GiftService {
     }
 
 
-    public void addGift(GiftCertificate giftCertificate) {
+    public void addGift(GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException {
+        GiftCertificateValidator.validate(giftCertificate);
 
         try {
             giftRepo.addGift(giftCertificate);
         } catch (Exception e) {
-            throw new IllegalArgumentException();
-        }
-
-
-    }
-
-    public List<GiftCertificate> getAll() throws ClassNotFoundException {
-
-        try {
-            List<GiftCertificate> list = giftRepo.list();
-            return list;
-        } catch (Exception e) {
-            throw new ClassNotFoundException();
-
-
+            throw new DaoException("not saved");
         }
 
     }
 
-    public int update(int id, GiftCertificate giftCertificate) {
-        try {
-            return giftRepo.update(id, giftCertificate);
-        } catch (Exception e) {
+    public List<GiftCertificate> getAll() throws DaoException {
 
-            throw new IllegalArgumentException();
-        }
-
+        List<GiftCertificate> list = giftRepo.list();
+        return list;
     }
 
-    public int delete(int id) {
-        try {
-            return giftRepo.delete(id);
 
-        } catch (Exception e) {
-            throw new IllegalArgumentException();
-        }
-
-
+    public void update(long id, GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException {
+        IdentifiableValidator.validateId(id);
+        giftCertificate.setId((int) id);
+        GiftCertificateValidator.validateForUpdate(giftCertificate);
+        giftCertificate.setLastUpdateDate(ForDate.getDate().toString());
+        List<Tag> requestTags = giftCertificate.getTags();
+        List<Tag> createdTags = tagRepo.getAll();
+        saveNewTags(requestTags, createdTags);
+        giftRepo.update((int) id, giftCertificate);
     }
 
-    public GiftCertificate findById(int id) throws ClassNotFoundException {
-
-        try {
-            return giftRepo.getById(id);
-        } catch (Exception e) {
-            throw new ClassNotFoundException();
+    private void saveNewTags(List<Tag> requestTags, List<Tag> createdTags) throws DaoException {
+        if (requestTags == null) {
+            return;
         }
-    }
-
-    public void addAssociatedTag(int id, Tag tag) throws FieldNotFoundException {
-        boolean exist = tagRepo.existByName(tag.getName());
-        boolean existById = giftRepo.existById(id);
-        System.out.println(existById);
-        if (!existById) return;
-        try {
-            if (exist) {
-                Tag byId = tagRepo.getByName(tag.getName());
-                giftRepo.addAssociatedTags(id, byId.getId());
-            } else {
-                int insert = tagRepo.insert(tag);
-                System.out.println(tagRepo.existByName(tag.getName()));
-                Tag byName = tagRepo.getByName(tag.getName());
-                giftRepo.addAssociatedTags(id, byName.getId());
+        for (Tag requestTag : requestTags) {
+            boolean isExist = false;
+            for (Tag createdTag : createdTags) {
+                if (Objects.equals(requestTag.getName(), createdTag.getName())) {
+                    isExist = true;
+                    break;
+                }
             }
-        } catch (Exception e) {
-            throw new FieldNotFoundException("field not found");
-
+            if (!isExist) {
+                tagRepo.insert(requestTag);
+            }
         }
-
     }
 
-    public List<Tag> list(int id) throws ClassNotFoundException {
-        boolean b = giftRepo.existById(id);
-        if (!b) return new ArrayList<>();
+    public int delete(int id) throws DaoException {
+        return giftRepo.delete(id);
+    }
 
-
-        try {
-
-            return giftRepo.getAssociatedTags(id);
-
-
-        } catch (Exception e) {
-            throw new ClassNotFoundException();
-
-
-        }
-
+    public GiftCertificate findById(int id) throws DaoException {
+        return giftRepo.getById(id);
     }
 
 
-    public int deleteAssociatedTag(int gifId, int tagId) throws FieldNotFoundException {
-
-        try {
-            int i = giftRepo.deleteAssociated(gifId, tagId);
-
-            return i;
-        } catch (Exception e) {
-            throw new FieldNotFoundException("field not found with this id");
+    public void addAssociatedTag(int id, Tag tag) throws DaoException {
+        boolean exist = tagRepo.existByName(tag.getName());
+        if (exist) {
+            List<Tag> tags = tagRepo.getByName(tag.getName());
+            Tag byId = tags.get(0);
+            giftRepo.addAssociatedTags(id, byId.getId());
+        } else {
+            tagRepo.insert(tag);
+            List<Tag> tags = tagRepo.getByName(tag.getName());
+            Tag byId = tags.get(0);
+            giftRepo.addAssociatedTags(id, byId.getId());
         }
 
+
+    }
+
+    public List<Tag> list(int id) throws DaoException, IncorrectParameterException {
+        IdentifiableValidator.validateId(id);
+        return giftRepo.getAssociatedTags(id);
+    }
+    public void deleteAssociatedTags(long id, List<Tag> tags) throws DaoException, IncorrectParameterException {
+        IdentifiableValidator.validateId(id);
+        GiftCertificateValidator.validateListOfTags(tags);
+        giftRepo.deleteTagsAssociation(id, tags);
+    }
+
+
+    public List<GiftCertificate> doFilter(MultiValueMap<String, String> requestParams) throws DaoException {
+        Map<String, String> map = new HashMap<>();
+        map.put(NAME, getSingleRequestParameter(requestParams, NAME));
+        map.put(TAG_NAME, getSingleRequestParameter(requestParams, TAG_NAME));
+        map.put(PART_OF_NAME, getSingleRequestParameter(requestParams, PART_OF_NAME));
+        map.put(PART_OF_DESCRIPTION, getSingleRequestParameter(requestParams, PART_OF_DESCRIPTION));
+        map.put(PART_OF_TAG_NAME, getSingleRequestParameter(requestParams, PART_OF_TAG_NAME));
+        map.put(SORT_BY_NAME, getSingleRequestParameter(requestParams, SORT_BY_NAME));
+        map.put(SORT_BY_CREATE_DATE, getSingleRequestParameter(requestParams, SORT_BY_CREATE_DATE));
+        map.put(SORT_BY_TAG_NAME, getSingleRequestParameter(requestParams, SORT_BY_TAG_NAME));
+        return giftRepo.getWithFilters(map);
+    }
+
+    protected String getSingleRequestParameter(MultiValueMap<String, String> requestParams, String parameter) {
+        if (requestParams.containsKey(parameter)) {
+            return requestParams.get(parameter).get(0);
+        } else {
+            return null;
+        }
     }
 
 
