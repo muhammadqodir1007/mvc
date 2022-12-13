@@ -9,8 +9,8 @@ public class ForDate {
 
     static public Date getDate() {
 
-        Date date = new Date(System.currentTimeMillis());
-        return date;
+        return new Date(System.currentTimeMillis());
+
 
     }
 

@@ -57,11 +57,11 @@ public class GiftRepoImpl implements GiftRepo {
     @Override
     public List<GiftCertificate> list() throws DaoException {
 
-        try {
+       // try {
             return jdbcTemplate.query(GiftQueries.getAll, giftCertificateRowMapper);
-        } catch (DataAccessException dataAccessException) {
-            throw new DaoException(NO_ENTITY);
-        }
+//        } catch (DataAccessException dataAccessException) {
+//            throw new DaoException(NO_ENTITY);
+//        }
 
     }
 
