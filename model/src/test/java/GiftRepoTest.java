@@ -1,8 +1,8 @@
-import org.example.dao.config.PostgreSqlConfigForTest;
-import org.example.dao.repo.giftRepo.GiftRepo;
-import org.example.entity.GiftCertificate;
-import org.example.entity.Tag;
-import org.example.exceptions.DaoException;
+import com.epam.dao.config.PostgreSqlConfigForTest;
+import com.epam.dao.repo.giftRepo.impl.GiftRepoImpl;
+import com.epam.entity.GiftCertificate;
+import com.epam.entity.Tag;
+import com.epam.exceptions.DaoException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +19,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.util.*;
 
+import static com.epam.dao.repo.creator.FilterParameters.*;
 import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration(classes = PostgreSqlConfigForTest.class)
@@ -27,7 +28,8 @@ import static org.junit.Assert.assertEquals;
 public class GiftRepoTest {
 
     @Autowired
-    GiftRepo giftRepo;
+    GiftRepoImpl giftRepo;
+
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -49,29 +51,10 @@ public class GiftRepoTest {
         filled = true;
     }
 
-    private static final Tag TAG_2 = new Tag(2, "tagName3");
-
-    private static final GiftCertificate GIFT_CERTIFICATE_1 = new GiftCertificate(1, "giftCertificate1",
-            "description1", 10.0, 1, "2012-12-12",
-            "2012-12-12", Collections.singletonList(new Tag(2, "tagName3")));
-
-    private static final GiftCertificate GIFT_CERTIFICATE_2 = new GiftCertificate(2, "giftCertificate3",
-            "description3", 30.0, 3, "2012-12-12",
-            "2012-12-12", Collections.singletonList(new Tag(2, "tagName3")));
-
-    private static final GiftCertificate GIFT_CERTIFICATE_3 = new GiftCertificate(3, "giftCertificate2",
-            "description2", 20.0, 2, "2012-12-12",
-            "2012-12-12", Collections.singletonList(new Tag(0, null)));
-    private static final GiftCertificate GIFT_CERTIFICATE_4 = new GiftCertificate(3, "giftCertificate2",
-            "description2", 20.2, 2, "2012-12-12",
-            "2012-12-12");
-
-    private static final String SORT_PARAMETER = "DESC";
-
     @Test
     void testGetById() throws DaoException {
-        GiftCertificate actual = giftRepo.getById(GIFT_CERTIFICATE_3.getId());
-        GiftCertificate expected = GIFT_CERTIFICATE_4;
+        GiftCertificate actual = giftRepo.getById(GiftCertificates.GIFT_CERTIFICATE_3.getId());
+        GiftCertificate expected = GiftCertificates.GIFT_CERTIFICATE_4;
         Assertions.assertEquals(expected, actual);
     }
 
@@ -80,14 +63,14 @@ public class GiftRepoTest {
         List<GiftCertificate> actual = giftRepo.list();
         System.out.println(actual);
 
-        List<GiftCertificate> expected = Arrays.asList(GIFT_CERTIFICATE_1, GIFT_CERTIFICATE_2, GIFT_CERTIFICATE_3);
+        List<GiftCertificate> expected = Arrays.asList(GiftCertificates.GIFT_CERTIFICATE_1, GiftCertificates.GIFT_CERTIFICATE_2, GiftCertificates.GIFT_CERTIFICATE_3);
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void testGetAssociatedTags() throws DaoException {
         List<Tag> actual = giftRepo.getAssociatedTags(2);
-        List<Tag> expected = Collections.singletonList(TAG_2);
+        List<Tag> expected = Collections.singletonList(GiftCertificates.TAG_2);
         Assertions.assertEquals(expected, actual);
     }
 
@@ -122,16 +105,16 @@ public class GiftRepoTest {
     @Test
     public void testGetWithFilters() throws DaoException {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("sortByName", SORT_PARAMETER);
-        parameters.put("partOfDescription", null);
-        parameters.put("partOfTagName", null);
-        parameters.put("tag_name", TAG_2.getName());
-        parameters.put("sortByTagName", null);
-        parameters.put("sortByCreateDate", null);
-        parameters.put("name", null);
-        parameters.put("partOfName", null);
+        parameters.put(SORT_BY_NAME, GiftCertificates.SORT_PARAMETER);
+        parameters.put(PART_OF_DESCRIPTION, null);
+        parameters.put(PART_OF_TAG_NAME, null);
+        parameters.put(TAG_NAME, GiftCertificates.TAG_2.getName());
+        parameters.put(SORT_BY_TAG_NAME, null);
+        parameters.put(SORT_BY_CREATE_DATE, null);
+        parameters.put(NAME, null);
+        parameters.put(PART_OF_NAME, null);
         List<GiftCertificate> actual = giftRepo.getWithFilters(parameters);
-        List<GiftCertificate> expected = Arrays.asList(GIFT_CERTIFICATE_2, GIFT_CERTIFICATE_1);
+        List<GiftCertificate> expected = Arrays.asList(GiftCertificates.GIFT_CERTIFICATE_2, GiftCertificates.GIFT_CERTIFICATE_1);
 
         Assertions.assertEquals(expected, actual);
     }

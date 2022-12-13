@@ -1,0 +1,16 @@
+import com.epam.entity.GiftCertificate;
+import com.epam.entity.Tag;
+
+import java.sql.Date;
+import java.util.List;
+
+public interface GiftCertificates {
+
+
+    Tag tag2 = new Tag(1, "tag2");
+    GiftCertificate giftCertificate1 = new GiftCertificate(1, "name1", "description1", 56.9, 23, new Date(1669126392015L).toString(), new Date(1669126392015L).toString());
+    GiftCertificate giftCertificate2 = new GiftCertificate(2, "name2", "description2", 75, 33, new Date(1669126392015L).toString(), new Date(1669126392015L).toString(), List.of(tag2));
+    GiftCertificate giftCertificate3 = new GiftCertificate(3, "name3", "description3", 56, 67, new Date(1669126392015L).toString(), new Date(1669126392015L).toString());
+    GiftCertificate giftCertificate4 = new GiftCertificate(6, "name4", "description4", 75, 33, new Date(1669126392015L).toString(), new Date(1669126392015L).toString());
+
+}

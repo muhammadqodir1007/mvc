@@ -1,7 +1,6 @@
-import org.example.dao.repo.tagRepo.TagRepo;
-import org.example.entity.Tag;
-import org.example.exceptions.DaoException;
-import org.example.service.TagService;
+import com.epam.dao.repo.tagRepo.impl.TagRepoImpl;
+import com.epam.exceptions.DaoException;
+import com.epam.service.impl.TagServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,25 +16,19 @@ import static org.mockito.Mockito.when;
 public class TagServiceTest {
 
     @Mock
-    TagRepo tagRepo;
+    TagRepoImpl tagRepo;
 
 
     @InjectMocks
-    TagService tagService;
-
-
-    private static final Tag tag1 = new Tag(1, "first");
-    private static final Tag tag2 = new Tag(2, "second");
-    private static final Tag tag3 = new Tag(3, "third");
-    private static final Tag tag4 = new Tag(4, "fourth");
+    TagServiceImpl tagService;
 
 
     @Test
     void testGetById() throws DaoException {
 
-        when(tagRepo.getById(tag1.getId())).thenReturn(tag1);
+        when(tagRepo.getById(Tags.tag1.getId())).thenReturn(Tags.tag1);
 
-        assertEquals(tag1, tagService.getOne(tag1.getId()));
+        assertEquals(Tags.tag1, tagService.getOne(Tags.tag1.getId()));
 
     }
 
@@ -43,9 +36,9 @@ public class TagServiceTest {
     @Test
     void testGetAll() throws DaoException {
 
-        when(tagRepo.getAll()).thenReturn(Arrays.asList(tag1, tag2, tag3, tag4));
+        when(tagRepo.getAll()).thenReturn(Arrays.asList(Tags.tag1, Tags.tag2, Tags.tag3, Tags.tag4));
 
-        assertEquals(Arrays.asList(tag1, tag2, tag3, tag4), tagService.getAll());
+        assertEquals(Arrays.asList(Tags.tag1, Tags.tag2, Tags.tag3, Tags.tag4), tagService.getAll());
 
     }
 

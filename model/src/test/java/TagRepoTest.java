@@ -1,8 +1,9 @@
-import org.example.dao.config.PostgreSqlConfigForTest;
-import org.example.dao.repo.tagRepo.TagRepo;
-import org.example.entity.Tag;
-import org.example.exceptions.DaoException;
+import com.epam.dao.config.PostgreSqlConfigForTest;
+import com.epam.dao.repo.tagRepo.impl.TagRepoImpl;
+import com.epam.entity.Tag;
+import com.epam.exceptions.DaoException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,10 +19,8 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration(classes = PostgreSqlConfigForTest.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -29,15 +28,10 @@ import static org.junit.Assert.assertTrue;
 @ExtendWith(SpringExtension.class)
 public class TagRepoTest {
     private static boolean filled;
-    Tag tag1 = new Tag(1, "tagName1");
-    Tag tag2 = new Tag(2, "tagName2");
-    Tag tag3 = new Tag(3, "tagName3");
-    Tag tag4 = new Tag(4, "tagName4");
-    Tag tag5 = new Tag(5, "tagName5");
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private TagRepo tagRepo;
+    private TagRepoImpl tagRepo;
 
     @AfterEach
     void cleanUp() {
@@ -50,7 +44,7 @@ public class TagRepoTest {
         if (filled) return;
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("/fillingTestTables.sql"));
-        populator.execute(jdbcTemplate.getDataSource());
+        populator.execute(Objects.requireNonNull(jdbcTemplate.getDataSource()));
         filled = true;
     }
 
@@ -59,7 +53,7 @@ public class TagRepoTest {
     void testGetById() throws DaoException { //done
 
         Tag actual = tagRepo.getById(1);
-        assertEquals(tag1.getName(), actual.getName());
+        Assertions.assertEquals(Tags.tag1.getName(), actual.getName());
 
     }
 
@@ -69,16 +63,16 @@ public class TagRepoTest {
         try {
             tagRepo.getById(78);
         } catch (DaoException e) {
-            assertEquals("404001", e.getMessage());
+            Assertions.assertEquals("404001", e.getMessage());
         }
     }
 
 
     @Test
     void listTest() throws DaoException {
-        List<Tag> expected = Arrays.asList(tag1, tag2, tag3, tag4, tag5);
+        List<Tag> expected = Arrays.asList(Tags.tag1, Tags.tag2, Tags.tag3, Tags.tag4, Tags.tag5);
         List<Tag> all = tagRepo.getAll();
-        assertEquals(expected, all);
+        Assertions.assertEquals(expected, all);
 
     }
 
@@ -99,7 +93,7 @@ public class TagRepoTest {
 
         String randomString = sb.toString();
         boolean b = tagRepo.existByName(randomString);
-        assertTrue(!b);
+        Assertions.assertTrue(!b);
 
 
     }
@@ -122,7 +116,7 @@ public class TagRepoTest {
             String randomString = sb.toString();
             List<Tag> byName = tagRepo.getByName(randomString);
         } catch (Exception e) {
-            assertEquals("404003", e.getMessage());
+            Assertions.assertEquals("404003", e.getMessage());
         }
 
 
