@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.epam.dao.repo.giftRepo.GiftQueries.*;
-import static com.epam.exceptions.ExceptionDaoMessageCodes.*;
 
 @Repository
 @AllArgsConstructor
@@ -60,7 +59,7 @@ public class GiftRepoImpl implements GiftRepo {
                 ps.execute();
             });
         } catch (DataAccessException dataAccessException) {
-            throw new DaoException(SAVING_ERROR);
+            throw new DaoException(dataAccessException.getMessage());
         }
     }
 
@@ -80,7 +79,7 @@ public class GiftRepoImpl implements GiftRepo {
             return jdbcTemplate.update(DELETE, id);
 
         } catch (DataAccessException d) {
-            throw new DaoException(NO_ENTITY_WITH_ID);
+            throw new DaoException(d.getMessage());
         }
     }
 
@@ -89,7 +88,7 @@ public class GiftRepoImpl implements GiftRepo {
         try {
             return jdbcTemplate.queryForObject(GET_GIFT_BY_ID, new BeanPropertyRowMapper<>(GiftCertificate.class), id);
         } catch (DataAccessException d) {
-            throw new DaoException(NO_ENTITY_WITH_ID);
+            throw new DaoException(d.getMessage());
         }
     }
 
@@ -98,7 +97,7 @@ public class GiftRepoImpl implements GiftRepo {
         try {
             return jdbcTemplate.query(GET_ASSOCIATED_TAGS, tagRowMapper, id);
         } catch (DataAccessException d) {
-            throw new DaoException(NO_ENTITY);
+            throw new DaoException(d.getMessage());
         }
     }
 
@@ -110,7 +109,7 @@ public class GiftRepoImpl implements GiftRepo {
                 ps.setInt(2, tagId);
             });
         } catch (DataAccessException d) {
-            throw new DaoException(SAVING_ERROR);
+            throw new DaoException(d.getMessage());
         }
     }
 
@@ -120,7 +119,7 @@ public class GiftRepoImpl implements GiftRepo {
             List<Long> tagIds = getTagsIds(tags);
             tagIds.forEach(tagId -> executeUpdateQuery(REMOVE_TAGS_ASSOCIATION, certificateId, tagId));
         } catch (DataAccessException e) {
-            throw new DaoException(NO_ENTITY_WITH_ID);
+            throw new DaoException(e.getMessage());
         }
     }
 
@@ -130,7 +129,7 @@ public class GiftRepoImpl implements GiftRepo {
             String query = queryCreator.createGetQuery(fields, TABLE_NAME);
             return jdbcTemplate.query(query, rowMapper);
         } catch (DataAccessException e) {
-            throw new DaoException(NO_ENTITY_WITH_PARAMETERS);
+            throw new DaoException(e.getMessage());
         }
     }
 
@@ -143,7 +142,7 @@ public class GiftRepoImpl implements GiftRepo {
             executeUpdateQuery(updateQuery);
             updateTags(item, item.getId());
         } catch (DataAccessException e) {
-            throw new DaoException(NO_ENTITY_WITH_ID);
+            throw new DaoException(e.getMessage());
         }
     }
 
