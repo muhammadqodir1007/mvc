@@ -6,21 +6,18 @@ import com.epam.dao.repo.giftRepo.impl.GiftRepoImpl;
 import com.epam.dao.repo.tagRepo.impl.TagRepoImpl;
 import com.epam.entity.GiftCertificate;
 import com.epam.entity.Tag;
+import com.epam.exceptions.DaoException;
 import com.epam.exceptions.IncorrectParameterException;
+import com.epam.response.ApiResponse;
 import com.epam.service.GiftService;
 import com.epam.validator.GiftCertificateValidator;
 import com.epam.validator.IdentifiableValidator;
-import com.epam.exceptions.DaoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import static com.epam.service.FilterParameters.*;
 
 @Service
 public class GiftServiceImpl implements GiftService {
@@ -34,26 +31,19 @@ public class GiftServiceImpl implements GiftService {
     }
 
     @Override
-    public void addGift(GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException {
+    public ApiResponse addGift(GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException {
         GiftCertificateValidator.validate(giftCertificate);
-
-        try {
-            giftRepo.addGift(giftCertificate);
-        } catch (Exception e) {
-            throw new DaoException("not saved");
-        }
-
+        giftRepo.addGift(giftCertificate);
+        return new ApiResponse("added", true);
     }
 
     @Override
     public List<GiftCertificate> getAll() throws DaoException {
-
-        List<GiftCertificate> list = giftRepo.list();
-        return list;
+        return giftRepo.list();
     }
 
     @Override
-    public void update(long id, GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException {
+    public ApiResponse update(long id, GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException {
         IdentifiableValidator.validateId(id);
         giftCertificate.setId((int) id);
         GiftCertificateValidator.validateForUpdate(giftCertificate);
@@ -62,6 +52,7 @@ public class GiftServiceImpl implements GiftService {
         List<Tag> createdTags = tagRepo.getAll();
         saveNewTags(requestTags, createdTags);
         giftRepo.update((int) id, giftCertificate);
+        return new ApiResponse("edited", true);
     }
 
     private void saveNewTags(List<Tag> requestTags, List<Tag> createdTags) throws DaoException {
@@ -83,8 +74,10 @@ public class GiftServiceImpl implements GiftService {
     }
 
     @Override
-    public int delete(int id) throws DaoException {
-        return giftRepo.delete(id);
+    public ApiResponse delete(int id) throws DaoException, IncorrectParameterException {
+        IdentifiableValidator.validateId(id);
+        giftRepo.delete(id);
+        return new ApiResponse("deleted", true);
     }
 
     @Override
@@ -93,18 +86,16 @@ public class GiftServiceImpl implements GiftService {
     }
 
     @Override
-    public void addAssociatedTag(int id, Tag tag) throws DaoException {
+    public ApiResponse addAssociatedTag(int id, Tag tag) throws DaoException {
         boolean exist = tagRepo.existByName(tag.getName());
-        if (exist) {
-            List<Tag> tags = tagRepo.getByName(tag.getName());
-            Tag byId = tags.get(0);
-            giftRepo.addAssociatedTags(id, byId.getId());
-        } else {
+
+        if (!exist) {
             tagRepo.insert(tag);
-            List<Tag> tags = tagRepo.getByName(tag.getName());
-            Tag byId = tags.get(0);
-            giftRepo.addAssociatedTags(id, byId.getId());
         }
+        Tag tag1 = tagRepo.getByName(tag.getName());
+
+        giftRepo.addAssociatedTags(id, tag1.getId());
+        return new ApiResponse("added", true);
 
 
     }
@@ -115,35 +106,22 @@ public class GiftServiceImpl implements GiftService {
         return giftRepo.getAssociatedTags(id);
     }
 
+
     @Override
-    public void deleteAssociatedTags(long id, List<Tag> tags) throws DaoException, IncorrectParameterException {
+    public ApiResponse deleteAssociatedTags(long id, List<Tag> tags) throws DaoException, IncorrectParameterException {
         IdentifiableValidator.validateId(id);
         GiftCertificateValidator.validateListOfTags(tags);
         giftRepo.deleteTagsAssociation(id, tags);
+        return new ApiResponse("deleted", true);
     }
 
     @Override
-    public List<GiftCertificate> doFilter(MultiValueMap<String, String> requestParams) throws DaoException {
-        Map<String, String> map = new HashMap<>();
-        map.put(NAME, getSingleRequestParameter(requestParams, NAME));
-        map.put(TAG_NAME, getSingleRequestParameter(requestParams, TAG_NAME));
-        map.put(PART_OF_NAME, getSingleRequestParameter(requestParams, PART_OF_NAME));
-        map.put(PART_OF_DESCRIPTION, getSingleRequestParameter(requestParams, PART_OF_DESCRIPTION));
-        map.put(PART_OF_TAG_NAME, getSingleRequestParameter(requestParams, PART_OF_TAG_NAME));
-        map.put(SORT_BY_NAME, getSingleRequestParameter(requestParams, SORT_BY_NAME));
-        map.put(SORT_BY_CREATE_DATE, getSingleRequestParameter(requestParams, SORT_BY_CREATE_DATE));
-        map.put(SORT_BY_TAG_NAME, getSingleRequestParameter(requestParams, SORT_BY_TAG_NAME));
-        return giftRepo.getWithFilters(map);
+    public List<GiftCertificate> doFilter(Map<String, String> requestParams) throws DaoException {
+        return giftRepo.getWithFilters(requestParams);
     }
-
-    protected String getSingleRequestParameter(MultiValueMap<String, String> requestParams, String parameter) {
-        if (requestParams.containsKey(parameter)) {
-            return requestParams.get(parameter).get(0);
-        } else {
-            return null;
-        }
-    }
-
 
 }
+
+
+
 

@@ -1,6 +1,7 @@
 package com.epam.dao.repo.giftRepo;
 
 import com.epam.entity.GiftCertificate;
+import com.epam.entity.GiftCertificateColumns;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -27,12 +28,12 @@ public class GiftCertificateFieldExtractor {
         String idString = String.valueOf(item.getId());
 
         Map<String, String> map = new HashMap<>();
-        map.put(NAME, name);
-        map.put(DESCRIPTION, description);
-        map.put(PRICE, priceString);
-        map.put(DURATION, durationString);
-        map.put(LAST_UPDATE_DATE, lastUpdateDate);
-        map.put(ID, idString);
+        map.put(String.valueOf(GiftCertificateColumns.name), name);
+        map.put(String.valueOf(GiftCertificateColumns.description), description);
+        map.put(price.toString(), priceString);
+        map.put(duration.toString(), durationString);
+        map.put(last_update_date.toString(), lastUpdateDate);
+        map.put(id.toString(), idString);
         return map;
     }
 }

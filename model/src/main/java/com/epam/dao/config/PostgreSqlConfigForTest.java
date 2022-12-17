@@ -8,28 +8,22 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 
 @Configuration
-@ComponentScan("com.epam")
-@PropertySource("classpath:dbConnection-test.properties")
+@PropertySource("classpath:application-test.properties")
 @Profile("test")
+@ComponentScan("com.epam")
 
 /**
  * Class {@code PostgreSqlDataBaseConfig} contains spring configuration for dao subproject tests.
  *
  *
- */
-public class PostgreSqlConfigForTest {
-
-
+ */ public class PostgreSqlConfigForTest {
     /**
      * Create bean {@link DataSource} which will be used as data source.
      *
      * @return the basicDataSource
      */
     @Bean
-    public DataSource dataSource(@Value("${db.user}") String user,
-                                 @Value("${db.password}") String password,
-                                 @Value("${db.driver}") String className,
-                                 @Value("${db.url}") String connectionUrl) {
+    public DataSource dataSource(@Value("${db.user}") String user, @Value("${db.password}") String password, @Value("${db.driver}") String className, @Value("${db.testUrl}") String connectionUrl) {
         BasicDataSource basicDataSource = new BasicDataSource();
         basicDataSource.setUsername(user);
         basicDataSource.setPassword(password);
@@ -37,7 +31,6 @@ public class PostgreSqlConfigForTest {
         basicDataSource.setUrl(connectionUrl);
         return basicDataSource;
     }
-
 
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {

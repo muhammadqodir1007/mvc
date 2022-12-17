@@ -1,32 +1,33 @@
 package com.epam.service;
 
-import com.epam.exceptions.IncorrectParameterException;
 import com.epam.entity.GiftCertificate;
 import com.epam.entity.Tag;
 import com.epam.exceptions.DaoException;
-import org.springframework.util.MultiValueMap;
+import com.epam.exceptions.IncorrectParameterException;
+import com.epam.response.ApiResponse;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GiftService {
 
-    List<GiftCertificate> doFilter(MultiValueMap<String, String> requestParams) throws DaoException;
 
-    void deleteAssociatedTags(long id, List<Tag> tags) throws DaoException, IncorrectParameterException;
+    ApiResponse deleteAssociatedTags(long id, List<Tag> tags) throws DaoException, IncorrectParameterException;
 
     List<Tag> list(int id) throws DaoException, IncorrectParameterException;
 
-    void addAssociatedTag(int id, Tag tag) throws DaoException;
+    ApiResponse addAssociatedTag(int id, Tag tag) throws DaoException;
 
     GiftCertificate findById(int id) throws DaoException;
 
-    int delete(int id) throws DaoException;
+    ApiResponse delete(int id) throws DaoException, IncorrectParameterException;
 
 
-    void update(long id, GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException;
+    ApiResponse update(long id, GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException;
 
     List<GiftCertificate> getAll() throws DaoException;
 
-    void addGift(GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException;
+    ApiResponse addGift(GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException;
 
+    List<GiftCertificate> doFilter(Map<String, String> requestParams) throws DaoException;
 }

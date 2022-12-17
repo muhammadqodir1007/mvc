@@ -1,10 +1,10 @@
 package com.epam.validator;
 
+import com.epam.entity.GiftCertificate;
+import com.epam.entity.Tag;
 import com.epam.exceptions.ExceptionIncorrectParameterMessageCodes;
 import com.epam.exceptions.IncorrectParameterException;
 import lombok.experimental.UtilityClass;
-import com.epam.entity.GiftCertificate;
-import com.epam.entity.Tag;
 
 import java.util.List;
 

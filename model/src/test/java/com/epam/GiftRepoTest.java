@@ -1,3 +1,5 @@
+package com.epam;
+
 import com.epam.dao.config.PostgreSqlConfigForTest;
 import com.epam.dao.repo.giftRepo.impl.GiftRepoImpl;
 import com.epam.entity.GiftCertificate;
@@ -19,8 +21,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.util.*;
 
-import static com.epam.dao.repo.creator.FilterParameters.*;
-import static org.junit.Assert.assertEquals;
+import static com.epam.dao.repo.creator.FilterParameters.sortByName;
 
 @ContextConfiguration(classes = PostgreSqlConfigForTest.class)
 @ActiveProfiles("test")
@@ -47,74 +48,68 @@ public class GiftRepoTest {
         if (filled) return;
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("/fillingTestTables.sql"));
-        populator.execute(jdbcTemplate.getDataSource());
+        populator.execute(Objects.requireNonNull(jdbcTemplate.getDataSource()));
         filled = true;
     }
 
     @Test
-    void testGetById() throws DaoException {
+    void shouldGetById() throws DaoException {
         GiftCertificate actual = giftRepo.getById(GiftCertificates.GIFT_CERTIFICATE_3.getId());
-        GiftCertificate expected = GiftCertificates.GIFT_CERTIFICATE_4;
+        GiftCertificate expected = GiftCertificate.builder().id(3)
+                .name("giftCertificate2").description("description2").price(20.2).duration(2)
+                .createDate("2012-12-12").lastUpdateDate("2012-12-12").tags(new ArrayList<>()).build();
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    void testGetAll() throws DaoException {
+    void shouldGetAll() throws DaoException {
         List<GiftCertificate> actual = giftRepo.list();
-        System.out.println(actual);
-
         List<GiftCertificate> expected = Arrays.asList(GiftCertificates.GIFT_CERTIFICATE_1, GiftCertificates.GIFT_CERTIFICATE_2, GiftCertificates.GIFT_CERTIFICATE_3);
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    void testGetAssociatedTags() throws DaoException {
+    void shouldGetAssociatedTags() throws DaoException {
         List<Tag> actual = giftRepo.getAssociatedTags(2);
         List<Tag> expected = Collections.singletonList(GiftCertificates.TAG_2);
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    void testGetByIdError() {
+    void shouldGetByIdError() {
         try {
             giftRepo.getById(34734);
         } catch (DaoException e) {
-            assertEquals("404001", e.getMessage());
+            Assertions.assertEquals("404001", e.getMessage());
         }
 
     }
 
     @Test
-    void testGetTagsErrorError() {
+    void shouldGetTagsError() {
         try {
             giftRepo.getAssociatedTags(134);
         } catch (DaoException e) {
-            assertEquals("404000", e.getMessage());
+            Assertions.assertEquals("404000", e.getMessage());
         }
     }
 
     @Test
-    void saveError() {
+    void shouldThrowSaveError() {
         try {
             giftRepo.addGift(new GiftCertificate());
         } catch (DaoException e) {
-            assertEquals("404004", e.getMessage());
+            Assertions.assertEquals("404004", e.getMessage());
         }
     }
 
     @Test
-    public void testGetWithFilters() throws DaoException {
+
+    public void shouldGetWithFilters() throws DaoException {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(SORT_BY_NAME, GiftCertificates.SORT_PARAMETER);
-        parameters.put(PART_OF_DESCRIPTION, null);
-        parameters.put(PART_OF_TAG_NAME, null);
-        parameters.put(TAG_NAME, GiftCertificates.TAG_2.getName());
-        parameters.put(SORT_BY_TAG_NAME, null);
-        parameters.put(SORT_BY_CREATE_DATE, null);
-        parameters.put(NAME, null);
-        parameters.put(PART_OF_NAME, null);
+        parameters.put(sortByName.toString(), GiftCertificates.SORT_PARAMETER);
         List<GiftCertificate> actual = giftRepo.getWithFilters(parameters);
-        List<GiftCertificate> expected = Arrays.asList(GiftCertificates.GIFT_CERTIFICATE_2, GiftCertificates.GIFT_CERTIFICATE_1);
+        List<GiftCertificate> expected = Arrays.asList(GiftCertificates.GIFT_CERTIFICATE_2, GiftCertificates.GIFT_CERTIFICATE_3, GiftCertificates.GIFT_CERTIFICATE_1);
 
         Assertions.assertEquals(expected, actual);
     }

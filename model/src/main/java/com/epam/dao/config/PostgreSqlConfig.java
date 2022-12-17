@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:dbConnection.properties")
+@PropertySource("classpath:application.properties")
 public class PostgreSqlConfig {
 
     /**
@@ -19,10 +19,7 @@ public class PostgreSqlConfig {
 
 
     @Bean
-    public DataSource dataSource(@Value("${db.user}") String user,
-                                 @Value("${db.password}") String password,
-                                 @Value("${db.driver}") String className,
-                                 @Value("${db.url}") String connectionUrl) {
+    public DataSource dataSource(@Value("${db.user}") String user, @Value("${db.password}") String password, @Value("${db.driver}") String className, @Value("${db.url}") String connectionUrl) {
         BasicDataSource basicDataSource = new BasicDataSource();
         basicDataSource.setUsername(user);
         basicDataSource.setPassword(password);

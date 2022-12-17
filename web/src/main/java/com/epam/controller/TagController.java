@@ -1,10 +1,11 @@
 package com.epam.controller;
 
-import com.epam.exceptions.IncorrectParameterException;
-import com.epam.service.TagService;
 import com.epam.entity.Tag;
 import com.epam.exceptions.DaoException;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.epam.exceptions.IncorrectParameterException;
+import com.epam.response.ApiResponse;
+import com.epam.service.TagService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,31 +19,25 @@ import java.util.List;
  * So that {@code TagController} is accessed by sending request to /tag.
  */
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/tag")
 public class TagController {
     final
     TagService tagService;
 
-    @Autowired
-    public TagController(TagService tagService) {
-        this.tagService = tagService;
-    }
 
     /**
      * Method for getting all tags from data source.
-     *
      * @return List of found tags
      * @throws DaoException an exception thrown in case tags not found
      */
     @GetMapping
     public List<Tag> list() throws DaoException {
-        List<Tag> all = tagService.getAll();
-        return all;
+        return tagService.getAll();
     }
 
     /**
      * Method for saving new tag.
-     *
      * @param tag tag for saving
      * @return CREATED HttpStatus
      * @throws DaoException                the exception thrown in case of saving error
@@ -50,40 +45,34 @@ public class TagController {
      */
 
     @PostMapping
-    public ResponseEntity addTag(@RequestBody Tag tag) throws DaoException, IncorrectParameterException {
-        tagService.insert(tag);
-        return ResponseEntity.status(HttpStatus.CREATED).body("{\"response\" : \"created\"}");
+    public ResponseEntity<ApiResponse> addTag(@RequestBody Tag tag) throws DaoException, IncorrectParameterException {
+        ApiResponse apiResponse = tagService.insert(tag);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     /**
      * Method for getting tag by ID.
-     *
      * @param id ID of tag to get
      * @return Found tag entity
      * @throws DaoException an exception thrown in case tag with such ID not found
      */
 
 
-    @GetMapping(value = "/{id}", produces = "application/json")
-    public Tag tag(@PathVariable int id) throws DaoException {
-        Tag byId = tagService.getOne(id);
-        return byId;
+    @GetMapping(value = "/{id}")
+    public Tag tag(@PathVariable int id) throws DaoException, IncorrectParameterException {
+        return tagService.getOne(id);
     }
 
     /**
      * Method for removing tag by ID.
-     *
      * @param id ID of tag to remove
      * @return NO_CONTENT HttpStatus
      * @throws DaoException an exception thrown in case tag with such ID not found
      */
-    @DeleteMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity deleteTags(@PathVariable int id) throws DaoException {
-        int delete = tagService.delete(id);
-        if (delete == 0)
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("{\"response\" : \"something went wrong \"}");
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("{\"response\" : \"deleted\"}");
-
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<ApiResponse> deleteTags(@PathVariable int id) throws DaoException {
+        ApiResponse apiResponse = tagService.delete(id);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(apiResponse);
     }
 
 

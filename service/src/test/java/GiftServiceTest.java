@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-public class GiftServiceTest {
+ class GiftServiceTest {
 
     @Mock
     GiftRepoImpl giftRepo;
@@ -29,7 +29,7 @@ public class GiftServiceTest {
 
 
     @Test
-    public void testGetById() throws DaoException {
+    public void shouldReturnGiftById() throws DaoException {
         when(giftRepo.getById(GiftCertificates.giftCertificate1.getId())).thenReturn(GiftCertificates.giftCertificate1);
         GiftCertificate actual = giftService.findById(GiftCertificates.giftCertificate1.getId());
         assertEquals(GiftCertificates.giftCertificate1, actual);
@@ -37,7 +37,7 @@ public class GiftServiceTest {
     }
 
     @Test
-    public void testGetAll() throws DaoException {
+    public void shouldReturnAll() throws DaoException {
         List<GiftCertificate> giftCertificates = Arrays.asList(GiftCertificates.giftCertificate4, GiftCertificates.giftCertificate3, GiftCertificates.giftCertificate2, GiftCertificates.giftCertificate1);
         when(giftRepo.list()).thenReturn(giftCertificates);
         assertEquals(giftCertificates, giftService.getAll());
@@ -45,7 +45,7 @@ public class GiftServiceTest {
     }
 
     @Test
-    public void testGetAssociatedTags() throws DaoException, IncorrectParameterException {
+    public void shouldGetAssociatedTags() throws DaoException, IncorrectParameterException {
 
         when(giftRepo.getAssociatedTags(GiftCertificates.giftCertificate2.getId())).thenReturn(Collections.singletonList(GiftCertificates.tag2));
 

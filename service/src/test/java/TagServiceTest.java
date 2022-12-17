@@ -1,5 +1,6 @@
 import com.epam.dao.repo.tagRepo.impl.TagRepoImpl;
 import com.epam.exceptions.DaoException;
+import com.epam.exceptions.IncorrectParameterException;
 import com.epam.service.impl.TagServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TagServiceTest {
+ class TagServiceTest {
 
     @Mock
     TagRepoImpl tagRepo;
@@ -24,7 +25,7 @@ public class TagServiceTest {
 
 
     @Test
-    void testGetById() throws DaoException {
+    void shouldGetById() throws DaoException, IncorrectParameterException {
 
         when(tagRepo.getById(Tags.tag1.getId())).thenReturn(Tags.tag1);
 
@@ -34,7 +35,7 @@ public class TagServiceTest {
 
 
     @Test
-    void testGetAll() throws DaoException {
+    void shouldGetAll() throws DaoException {
 
         when(tagRepo.getAll()).thenReturn(Arrays.asList(Tags.tag1, Tags.tag2, Tags.tag3, Tags.tag4));
 

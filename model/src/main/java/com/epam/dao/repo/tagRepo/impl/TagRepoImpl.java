@@ -1,69 +1,41 @@
 package com.epam.dao.repo.tagRepo.impl;
 
-import com.epam.dao.repo.tagRepo.TagQueries;
 import com.epam.dao.repo.tagRepo.TagRepo;
 import com.epam.dao.repo.tagRepo.TagRowMapper;
 import com.epam.entity.Tag;
 import com.epam.exceptions.DaoException;
+import lombok.AllArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.epam.exceptions.ExceptionDaoMessageCodes.*;
+import static com.epam.dao.repo.tagRepo.TagQueries.*;
 
 @Repository
+@AllArgsConstructor
 public class TagRepoImpl implements TagRepo {
-
-
-    protected final ResultSetExtractor<List<Tag>> rowMapper;
 
     private final JdbcTemplate jdbcTemplate;
     private final TagRowMapper tagRowMapper;
 
-    public TagRepoImpl(ResultSetExtractor<List<Tag>> rowMapper, JdbcTemplate jdbcTemplate) {
-        this.rowMapper = rowMapper;
-        this.jdbcTemplate = jdbcTemplate;
-        tagRowMapper = new TagRowMapper();
-    }
 
     @Override
     public List<Tag> getAll() throws DaoException {
-
         try {
-            List<Tag> tagList = jdbcTemplate.query(TagQueries.getAll, new ResultSetExtractor<List<Tag>>() {
-                @Override
-                public List<Tag> extractData(ResultSet rs) throws SQLException, DataAccessException {
-
-                    List<Tag> list = new ArrayList<>();
-                    while (rs.next()) {
-
-                        Tag tag = new Tag();
-                        tag.setId(rs.getInt("id"));
-                        tag.setName(rs.getString("tag_name"));
-                        list.add(tag);
-                    }
-                    return list;
-                }
-            });
-
-            return tagList;
+            return jdbcTemplate.query(GET_ALL, tagRowMapper);
         } catch (DataAccessException d) {
-            throw new DaoException(NO_ENTITY);
+            throw new DaoException(d.getMessage());
         }
     }
 
     @Override
-    public int insert(Tag tag) throws DaoException {
+    public void insert(Tag tag) throws DaoException {
         try {
-            return jdbcTemplate.update(TagQueries.insert, tag.getName());
+            jdbcTemplate.update(INSERT, tag.getName());
         } catch (DataAccessException d) {
-            throw new DaoException(SAVING_ERROR);
+            throw new DaoException(d.getMessage());
         }
 
     }
@@ -71,50 +43,70 @@ public class TagRepoImpl implements TagRepo {
     @Override
     public Tag getById(int id) throws DaoException {
         try {
-            List<Tag> tags = jdbcTemplate.query(TagQueries.getById, tagRowMapper, id);
-            return tags.get(0);
+            return jdbcTemplate.query(GET_BY_ID, ps -> ps.setInt(1, id), rs -> {
+                Tag tag = new Tag();
+                while (rs.next()) {
+                    tag = new Tag(rs.getInt(1), rs.getString(2));
+                }
+                return tag;
+            });
         } catch (DataAccessException d) {
-            throw new DaoException(NO_ENTITY_WITH_ID);
+            throw new DaoException(d.getMessage());
         }
 
     }
 
+    /**
+     * @param id checked exist or not from gift_certificates_tags ,if exist remove the relation ,
+     *           after that tag removed from tags table
+     */
+
     @Override
-    public int delete(int id) throws DaoException {
+    public void delete(int id) throws DaoException {
         try {
-            Integer exist = jdbcTemplate.queryForObject(TagQueries.existInGcT, Integer.class, id);
+            Integer exist = jdbcTemplate.queryForObject(EXIST_IN_GCT, Integer.class, id);
+            assert exist != null;
             if (exist != 0) {
-                jdbcTemplate.update(TagQueries.deleteFromGct, id);
-                return jdbcTemplate.update(TagQueries.delete, id);
+                jdbcTemplate.update(DELETE_FROM_GCT, id);
+                jdbcTemplate.update(DELETE, id);
             }
-            return jdbcTemplate.update(TagQueries.delete, id);
+            jdbcTemplate.update(DELETE, id);
         } catch (DataAccessException d) {
-            throw new DaoException(NO_ENTITY_WITH_ID);
+            throw new DaoException(d.getMessage());
         }
 
 
     }
 
-    @Override
-    public boolean existByName(String name) {
-
-        Integer integer = jdbcTemplate.queryForObject(TagQueries.existByName, Integer.class, name);
-
-        return integer > 0;
-
-
-    }
-
-    protected List<Tag> executeQuery(String query, Object... params) {
-        return jdbcTemplate.query(query, rowMapper, params);
-    }
+    /**
+     * @return boolean , after checking exist or not
+     */
 
     @Override
-    public List<Tag> getByName(String name) throws DaoException {
+    public boolean existByName(String name) throws DaoException {
         try {
-            return executeQuery(TagQueries.getByName, name);
-        } catch (DataAccessException e) {
-            throw new DaoException(NO_ENTITY_WITH_NAME);
+            Integer integer = jdbcTemplate.queryForObject(EXIST_BY_NAME, Integer.class, name);
+            assert integer != null;
+            return integer > 0;
+        } catch (DataAccessException d) {
+            throw new DaoException(d.getMessage());
         }
+    }
+
+
+    @Override
+    public Tag getByName(String name) throws DaoException {
+        try {
+            return jdbcTemplate.query(GET_BY_NAME, ps -> ps.setString(1, name), rs -> {
+                Tag tag = new Tag();
+                while (rs.next()) {
+                    tag = new Tag(rs.getInt(1), rs.getString(2));
+                }
+                return tag;
+            });
+        } catch (DataAccessException d) {
+            throw new DaoException(d.getMessage());
+        }
+
     }
 }

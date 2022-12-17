@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 
-
-
 public interface GiftRepo {
 
     List<GiftCertificate> list() throws DaoException;

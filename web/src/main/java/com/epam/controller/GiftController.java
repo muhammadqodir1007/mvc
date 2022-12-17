@@ -4,14 +4,16 @@ import com.epam.entity.GiftCertificate;
 import com.epam.entity.Tag;
 import com.epam.exceptions.DaoException;
 import com.epam.exceptions.IncorrectParameterException;
-import com.epam.service.impl.GiftServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.epam.response.ApiResponse;
+import com.epam.service.GiftService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class {@code GiftController} is an endpoint of the API
@@ -21,15 +23,11 @@ import java.util.List;
  * So that {@code GiftCertificateController} is accessed by sending request to /gift.
  */
 @RestController
+@AllArgsConstructor
 @RequestMapping(value = "/api/gift", produces = "application/json") //gift
 public class GiftController {
-    final
-    GiftServiceImpl giftService;
 
-    @Autowired
-    public GiftController(GiftServiceImpl giftService) {
-        this.giftService = giftService;
-    }
+    final GiftService giftService;
 
     /**
      * Method for getting all gift certificates from data source.
@@ -50,9 +48,9 @@ public class GiftController {
      */
 
     @PostMapping
-    public ResponseEntity add(@RequestBody GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException {
-        giftService.addGift(giftCertificate);
-        return ResponseEntity.status(HttpStatus.CREATED).body("{\"response\" : \"created\"}");
+    public ResponseEntity<ApiResponse> add(@RequestBody GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException {
+        ApiResponse apiResponse = giftService.addGift(giftCertificate);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     /**
@@ -63,12 +61,9 @@ public class GiftController {
      * @throws DaoException an exception thrown in case gift certificate with such ID not found
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable int id) throws DaoException {
-        int delete = giftService.delete(id);
-        if (delete != 0) return ResponseEntity.ok("{\"response\" : \"deleted\"}");
-        else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"response\" : \"not deleted\"}");
-        }
+    public ResponseEntity<ApiResponse> delete(@PathVariable int id) throws DaoException, IncorrectParameterException {
+        ApiResponse apiResponse = giftService.delete(id);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(apiResponse);
     }
 
     /**
@@ -80,8 +75,7 @@ public class GiftController {
      */
     @GetMapping("/{id}")
     public GiftCertificate getById(@PathVariable int id) throws DaoException {
-        GiftCertificate byId = giftService.findById(id);
-        return byId;
+        return giftService.findById(id);
     }
 
     /**
@@ -94,9 +88,9 @@ public class GiftController {
      */
 
     @PatchMapping("/{id}")
-    public ResponseEntity update(@PathVariable int id, @RequestBody GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException {
-        giftService.update(id, giftCertificate);
-        return ResponseEntity.status(HttpStatus.CREATED).body("{\"response\" : \"updated\"}");
+    public ResponseEntity<ApiResponse> update(@PathVariable int id, @RequestBody GiftCertificate giftCertificate) throws DaoException, IncorrectParameterException {
+        ApiResponse update = giftService.update(id, giftCertificate);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(update);
     }
 
     /**
@@ -111,7 +105,6 @@ public class GiftController {
     @GetMapping("/{id}/tags")
     public List<Tag> getAssociatedTags(@PathVariable int id) throws DaoException, IncorrectParameterException {
         return giftService.list(id);
-
     }
 
     /**
@@ -123,20 +116,19 @@ public class GiftController {
      */
 
     @PostMapping(value = "/{id}/tags")
-    public ResponseEntity addAssociatedTags(@PathVariable int id, @RequestBody Tag tag) throws DaoException {
-        giftService.addAssociatedTag(id, tag);
-        return ResponseEntity.status(HttpStatus.CREATED).body("{\"response\" : \"created\"}");
+    public ResponseEntity<ApiResponse> addAssociatedTags(@PathVariable int id, @RequestBody Tag tag) throws DaoException {
+        ApiResponse apiResponse = giftService.addAssociatedTag(id, tag);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     @DeleteMapping("/{id}/tags")
-    public ResponseEntity deleteAssociatedTags(@RequestBody List<Tag> tags,
-                                               @PathVariable long id) throws DaoException, IncorrectParameterException {
-        giftService.deleteAssociatedTags(id, tags);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Success");
+    public ResponseEntity<ApiResponse> deleteAssociatedTags(@RequestBody List<Tag> tags, @PathVariable long id) throws DaoException, IncorrectParameterException {
+        ApiResponse apiResponse = giftService.deleteAssociatedTags(id, tags);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(apiResponse);
     }
 
     @GetMapping("/search")
-    public List<GiftCertificate> giftCertificatesByParameter(@RequestParam MultiValueMap<String, String> allRequestParams) throws DaoException {
+    public List<GiftCertificate> giftCertificatesByParameter(@RequestParam Map<String, String> allRequestParams) throws DaoException {
         return giftService.doFilter(allRequestParams);
     }
 

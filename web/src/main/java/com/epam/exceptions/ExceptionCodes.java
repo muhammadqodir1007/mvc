@@ -15,19 +15,18 @@ public enum ExceptionCodes {
         this.reasonPhrase = reasonPhrase;
     }
 
-    public int getCode() {
-        return code;
-    }
+//    public int getCode() {
+//        return code;
+//    }
+//
 
-    public String getReasonPhrase() {
-        return reasonPhrase;
-    }
+//    public String getReasonPhrase() {
+//        return reasonPhrase;
+//    }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(code).append(" ");
-        sb.append(reasonPhrase);
-        return sb.toString();
+        return code + " " +
+                reasonPhrase;
     }
 }

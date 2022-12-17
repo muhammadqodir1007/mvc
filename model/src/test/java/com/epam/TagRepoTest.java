@@ -1,3 +1,5 @@
+package com.epam;
+
 import com.epam.dao.config.PostgreSqlConfigForTest;
 import com.epam.dao.repo.tagRepo.impl.TagRepoImpl;
 import com.epam.entity.Tag;
@@ -50,20 +52,11 @@ public class TagRepoTest {
 
 
     @Test
-    void testGetById() throws DaoException { //done
-
-        Tag actual = tagRepo.getById(1);
-        Assertions.assertEquals(Tags.tag1.getName(), actual.getName());
-
-    }
-
-
-    @Test
     void getByIdError() {
         try {
-            tagRepo.getById(78);
+            tagRepo.getById(787);
         } catch (DaoException e) {
-            Assertions.assertEquals("404001", e.getMessage());
+            Assertions.assertEquals("Incorrect result size: expected 1, actual 0", e.getMessage());
         }
     }
 
@@ -78,9 +71,8 @@ public class TagRepoTest {
 
 
     @Test
-    void testPut() {
+    void testPut() throws DaoException {
 
-        StringBuilder builder = new StringBuilder();
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
@@ -93,7 +85,7 @@ public class TagRepoTest {
 
         String randomString = sb.toString();
         boolean b = tagRepo.existByName(randomString);
-        Assertions.assertTrue(!b);
+        Assertions.assertFalse(b);
 
 
     }
@@ -102,7 +94,6 @@ public class TagRepoTest {
     @Test
     void testGetByNameError() {
         try {
-            StringBuilder builder = new StringBuilder();
             String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             StringBuilder sb = new StringBuilder();
             Random random = new Random();
@@ -114,9 +105,9 @@ public class TagRepoTest {
             }
 
             String randomString = sb.toString();
-            List<Tag> byName = tagRepo.getByName(randomString);
+            tagRepo.getByName(randomString);
         } catch (Exception e) {
-            Assertions.assertEquals("404003", e.getMessage());
+            Assertions.assertEquals("Incorrect result size: expected 1, actual 0", e.getMessage());
         }
 
 
