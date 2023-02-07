@@ -2,9 +2,7 @@ package com.epam.controller;
 
 import com.epam.entity.Tag;
 import com.epam.exceptions.DaoException;
-import com.epam.exceptions.IncorrectParameterException;
 import com.epam.response.ApiResponse;
-import com.epam.service.TagService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

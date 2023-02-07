@@ -1,7 +1,5 @@
 package com.epam.validator;
 
-import com.epam.exceptions.ExceptionIncorrectParameterMessageCodes;
-import com.epam.exceptions.IncorrectParameterException;
 import lombok.experimental.UtilityClass;
 
 

@@ -1,6 +1,5 @@
 import com.epam.dao.repo.tagRepo.impl.TagRepoImpl;
 import com.epam.exceptions.DaoException;
-import com.epam.exceptions.IncorrectParameterException;
 import com.epam.service.impl.TagServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -2,10 +2,9 @@ package com.epam.validator;
 
 import com.epam.entity.GiftCertificate;
 import com.epam.entity.Tag;
-import com.epam.exceptions.ExceptionIncorrectParameterMessageCodes;
-import com.epam.exceptions.IncorrectParameterException;
 import lombok.experimental.UtilityClass;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -14,8 +13,8 @@ public class GiftCertificateValidator {
     private final int MAX_LENGTH_NAME = 45;
     private final int MIN_LENGTH_NAME = 3;
     private final int MAX_LENGTH_DESCRIPTION = 300;
-    private final double MIN_PRICE = 0.01;
-    private final double MAX_PRICE = 999999.99;
+    private final BigDecimal MIN_PRICE = BigDecimal.valueOf(0.01);
+    private final BigDecimal MAX_PRICE = BigDecimal.valueOf(999999.99);
     private final int MAX_DURATION = 366;
     private final int MIN_DURATION = 1;
 
@@ -35,13 +34,12 @@ public class GiftCertificateValidator {
         if (giftCertificate.getDescription() != null) {
             validateDescription(giftCertificate.getDescription());
         }
-        if (giftCertificate.getPrice() != 0) {
+        if (true) {
             validatePrice(giftCertificate.getPrice());
         }
         if (giftCertificate.getDuration() != 0) {
             validateDuration(giftCertificate.getDuration());
         }
-        validateListOfTags(giftCertificate.getTags());
     }
 
     public void validateListOfTags(List<Tag> tags) throws IncorrectParameterException {
@@ -64,11 +62,11 @@ public class GiftCertificateValidator {
         }
     }
 
-    private void validatePrice(double price) throws IncorrectParameterException {
-        if (price > MAX_PRICE
-                || price < MIN_PRICE) {
-            throw new IncorrectParameterException(ExceptionIncorrectParameterMessageCodes.BAD_GIFT_CERTIFICATE_PRICE);
-        }
+    private void validatePrice(BigDecimal price) throws IncorrectParameterException {
+//        if (MAX_PRICE.
+//                || price < MIN_PRICE) {
+//            throw new IncorrectParameterException(ExceptionIncorrectParameterMessageCodes.BAD_GIFT_CERTIFICATE_PRICE);
+//        }
     }
 
     private void validateDuration(int duration) throws IncorrectParameterException {

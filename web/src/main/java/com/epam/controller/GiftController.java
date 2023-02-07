@@ -3,13 +3,10 @@ package com.epam.controller;
 import com.epam.entity.GiftCertificate;
 import com.epam.entity.Tag;
 import com.epam.exceptions.DaoException;
-import com.epam.exceptions.IncorrectParameterException;
 import com.epam.response.ApiResponse;
-import com.epam.service.GiftService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
