@@ -122,8 +122,8 @@ public class GiftFilterDao {
             );
         }
         // 2022 ->
-        if (Objects.nonNull(searchCriteria.getCreate_date())) {
-            String create_date = searchCriteria.getCreate_date();
+        if (Objects.nonNull(searchCriteria.getCreateDate())) {
+            String create_date = searchCriteria.getCreateDate();
             Expression<String> dateStringExpr =
                     builder.function("DATE_FORMAT",
                             String.class,
@@ -133,8 +133,8 @@ public class GiftFilterDao {
                     builder.like(builder.lower(dateStringExpr), "%" + create_date.toLowerCase() + "%"));
 
         }
-        if (Objects.nonNull(searchCriteria.getLast_update_date())) {
-            String create_date = searchCriteria.getLast_update_date();
+        if (Objects.nonNull(searchCriteria.getLastUpdateDate())) {
+            String create_date = searchCriteria.getLastUpdateDate();
             Expression<String> dateStringExpr =
                     builder.function("DATE_FORMAT",
                             String.class,
@@ -147,8 +147,8 @@ public class GiftFilterDao {
         // tag_name = tag_1
         // tag_name = tag_1,tag_2
         //
-        if (Objects.nonNull(searchCriteria.getTag_name())) {
-            String tag_name = searchCriteria.getTag_name();
+        if (Objects.nonNull(searchCriteria.getTagName())) {
+            String tag_name = searchCriteria.getTagName();
             if (tag_name.contains(",")) {
                 String[] tag = tag_name.split(",");
                 for (String s : tag) {
@@ -159,7 +159,7 @@ public class GiftFilterDao {
             } else {
                 predicates.add(
                         builder.equal(
-                                root.join("tags").get("name"), searchCriteria.getTag_name()));
+                                root.join("tags").get("name"), searchCriteria.getTagName()));
             }
         }
         return builder.and(predicates.toArray(new Predicate[0]));

@@ -40,7 +40,8 @@ public class GiftCertificate {
     private LocalDateTime lastUpdateTime;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
-    @JoinTable(name = "gift_certificates_tags", joinColumns = @JoinColumn(name = "gift_certificate_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @JoinTable(name = "gift_certificates_tags", joinColumns = @JoinColumn(name = "gift_certificate_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new HashSet<>();
 
     @ManyToMany(mappedBy = "giftCertificates", fetch = FetchType.LAZY)
@@ -81,7 +82,8 @@ public class GiftCertificate {
         this.tags = tags;
     }
 
-    public GiftCertificate(long id, String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateTime) {
+    public GiftCertificate(long id, String name, String description, BigDecimal price, int duration,
+                           LocalDateTime createDate, LocalDateTime lastUpdateTime) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -91,7 +93,8 @@ public class GiftCertificate {
         this.lastUpdateTime = lastUpdateTime;
     }
 
-    public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateTime, Set<Tag> tags) {
+    public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate,
+                           LocalDateTime lastUpdateTime, Set<Tag> tags) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -101,7 +104,8 @@ public class GiftCertificate {
         this.tags = tags;
     }
 
-    public GiftCertificate(long id, String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateTime, Set<Tag> tags) {
+    public GiftCertificate(long id, String name, String description, BigDecimal price, int duration,
+                           LocalDateTime createDate, LocalDateTime lastUpdateTime, Set<Tag> tags) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -113,7 +117,8 @@ public class GiftCertificate {
     }
 
 
-    public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateTime) {
+    public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate,
+                           LocalDateTime lastUpdateTime) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -122,7 +127,8 @@ public class GiftCertificate {
         this.lastUpdateTime = lastUpdateTime;
     }
 
-    public GiftCertificate(String name, String description, BigDecimal price, int duration, Set<Tag> tags, Set<Order> orders) {
+    public GiftCertificate(String name, String description, BigDecimal price, int duration, Set<Tag> tags,
+                           Set<Order> orders) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -142,7 +148,11 @@ public class GiftCertificate {
         if (this == o) return true;
         if (!(o instanceof GiftCertificate)) return false;
         GiftCertificate that = (GiftCertificate) o;
-        return id == that.id && duration == that.duration && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(createDate, that.createDate) && Objects.equals(lastUpdateTime, that.lastUpdateTime) && Objects.equals(tags, that.tags) && Objects.equals(orders, that.orders);
+        return id == that.id && duration == that.duration
+                && Objects.equals(name, that.name) && Objects.equals(description, that.description)
+                && Objects.equals(price, that.price) && Objects.equals(createDate, that.createDate)
+                && Objects.equals(lastUpdateTime, that.lastUpdateTime) && Objects.equals(tags, that.tags)
+                && Objects.equals(orders, that.orders);
     }
 
     @Override
@@ -152,7 +162,9 @@ public class GiftCertificate {
 
     @Override
     public String toString() {
-        return "GiftCertificate{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", price=" + price + ", duration=" + duration + ", createDate=" + createDate + ", lastUpdateTime=" + lastUpdateTime + ", tags=" + tags + '}';
+        return "GiftCertificate{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + "," +
+                " price=" + price + ", duration=" + duration + ", createDate=" + createDate +
+                ", lastUpdateTime=" + lastUpdateTime + ", tags=" + tags + '}';
     }
 
 }

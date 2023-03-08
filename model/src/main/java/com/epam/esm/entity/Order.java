@@ -31,7 +31,8 @@ public class Order {
     private User user;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
-    @JoinTable(name = "orders_gift_certificates", joinColumns = @JoinColumn(name = "order_id"), inverseJoinColumns = @JoinColumn(name = "gift_certificate_id"))
+    @JoinTable(name = "orders_gift_certificates", joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "gift_certificate_id"))
     private Set<GiftCertificate> giftCertificates;
 
     public Order() {
@@ -68,7 +69,8 @@ public class Order {
         if (this == o) return true;
         if (!(o instanceof Order)) return false;
         Order order = (Order) o;
-        return id == order.id && Objects.equals(price, order.price) && Objects.equals(createDate, order.createDate) && Objects.equals(user, order.user) && Objects.equals(giftCertificates, order.giftCertificates);
+        return id == order.id && Objects.equals(price, order.price) && Objects.equals(createDate, order.createDate)
+                && Objects.equals(user, order.user) && Objects.equals(giftCertificates, order.giftCertificates);
     }
 
     @Override
@@ -78,6 +80,7 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order{" + "id=" + id + ", price=" + price + ", createDate=" + createDate + ", user=" + user + ", giftCertificates=" + giftCertificates + '}';
+        return "Order{" + "id=" + id + ", price=" + price + ", " +
+                "createDate=" + createDate + ", user=" + user + ", giftCertificates=" + giftCertificates + '}';
     }
 }
