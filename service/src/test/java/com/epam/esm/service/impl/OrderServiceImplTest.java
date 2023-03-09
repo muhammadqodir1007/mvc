@@ -1,20 +1,5 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.OrderDto;
-import com.epam.esm.dto.UserDto;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
-import com.epam.esm.entity.creteria.EntityPage;
-import com.epam.esm.mapper.GiftConverter;
-import com.epam.esm.mapper.OrderConvert;
-import com.epam.esm.pagination.Page;
-import com.epam.esm.pagination.PaginationResult;
-import com.epam.esm.repository.GiftCertificateDao;
-import com.epam.esm.repository.OrderDao;
-import com.epam.esm.repository.UserDao;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

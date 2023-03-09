@@ -19,8 +19,8 @@ public class GiftConverter {
                 gift.getPrice(),
                 gift.getDuration()
         );
-        giftCertificateDto.setCreate_date(String.valueOf(gift.getCreateDate()));
-        giftCertificateDto.setLast_update_date(String.valueOf(gift.getLastUpdateTime()));
+        giftCertificateDto.setCreateDate(String.valueOf(gift.getCreateDate()));
+        giftCertificateDto.setLastUpdateDate(String.valueOf(gift.getLastUpdateTime()));
 
         if (gift.getTags() != null) {
             if (!gift.getTags().isEmpty()) {
@@ -40,11 +40,11 @@ public class GiftConverter {
         gift.setDescription(giftDto.getDescription());
         gift.setPrice(giftDto.getPrice());
         gift.setDuration(giftDto.getDuration());
-        if (giftDto.getCreate_date() != null) {
-            gift.setCreateDate(LocalDateTime.parse(giftDto.getCreate_date()));
+        if (giftDto.getCreateDate() != null) {
+            gift.setCreateDate(LocalDateTime.parse(giftDto.getCreateDate()));
         }
-        if (giftDto.getLast_update_date() != null) {
-            gift.setLastUpdateTime(LocalDateTime.parse(giftDto.getLast_update_date()));
+        if (giftDto.getLastUpdateDate() != null) {
+            gift.setLastUpdateTime(LocalDateTime.parse(giftDto.getLastUpdateDate()));
         }
         if (giftDto.getTags() != null) {
             if (giftDto.getTags().get(0).getName() != null) {

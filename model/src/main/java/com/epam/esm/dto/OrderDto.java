@@ -14,7 +14,7 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     private long id;
     private BigDecimal price;
     private String create_date;
-    private long user_id;
+    private long userId;
     private List<GiftCertificateDto> gift_certificates;
 
     public OrderDto(long id, BigDecimal price) {

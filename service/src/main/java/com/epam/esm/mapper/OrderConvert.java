@@ -25,7 +25,7 @@ public class OrderConvert {
             orderDto.setGift_certificates(giftDtos);
         }
         if (order.getUser() != null) {
-            orderDto.setUser_id(order.getUser().getId());
+            orderDto.setUserId(order.getUser().getId());
         }
         return orderDto;
     }

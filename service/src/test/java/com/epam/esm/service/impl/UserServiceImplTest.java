@@ -1,13 +1,5 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dto.UserDto;
-import com.epam.esm.entity.User;
-import com.epam.esm.entity.creteria.EntityPage;
-import com.epam.esm.mapper.UserConvert;
-import com.epam.esm.pagination.Page;
-import com.epam.esm.pagination.PaginationResult;
-import com.epam.esm.repository.OrderDao;
-import com.epam.esm.repository.UserDao;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

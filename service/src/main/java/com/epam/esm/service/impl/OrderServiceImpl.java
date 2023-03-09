@@ -18,7 +18,6 @@ import com.epam.esm.repository.OrderDao;
 import com.epam.esm.repository.UserDao;
 import com.epam.esm.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.hibernate.cfg.NotYetImplementedException;
 import org.springframework.stereotype.Service;
 
@@ -57,9 +56,9 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalArgumentException(MessageByLang.getMessage("GIFT_CERTIFICATES_NOT_ENTERED"));
         }
         Order order = new Order();
-        Optional<User> savedUser = userDao.getById(orderDto.getUser_id());
+        Optional<User> savedUser = userDao.getById(orderDto.getUserId());
         if (savedUser.isEmpty()) {
-            throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + orderDto.getUser_id());
+            throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + orderDto.getUserId());
         }
         List<GiftCertificate> reqGiftList = new ArrayList<>();
         BigDecimal price = BigDecimal.valueOf(0);
@@ -86,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public UserDto saveByUser(long userId, List<GiftCertificateDto> giftDtos) {
         OrderDto orderDto = new OrderDto();
-        orderDto.setUser_id(userId);
+        orderDto.setUserId(userId);
         orderDto.setGift_certificates(giftDtos);
         insert(orderDto);
         Optional<User> optionalUser = userDao.getById(userId);

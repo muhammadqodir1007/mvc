@@ -20,8 +20,8 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     private String description;
     private BigDecimal price;
     private int duration;
-    private String create_date;
-    private String last_update_date;
+    private String createDate;
+    private String lastUpdateDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<TagDto> tags;
 
