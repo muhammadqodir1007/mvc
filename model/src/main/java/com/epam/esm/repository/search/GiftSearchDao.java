@@ -1,4 +1,4 @@
-package com.epam.esm.repository.filter;
+package com.epam.esm.repository.search;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.creteria.EntityPage;
@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
-public class GiftFilterDao {
+public class GiftSearchDao {
     @PersistenceContext
     EntityManager em;
 
-    public PaginationResult<GiftCertificate> findAllWithFilters(GiftSearchCriteria searchCriteria, EntityPage entityPage) {
+    public PaginationResult<GiftCertificate> findAllWithParams(GiftSearchCriteria searchCriteria, EntityPage entityPage) {
         int lastPageNumber;
         long totalRecords;
         List<GiftCertificate> entityList;
@@ -32,14 +32,10 @@ public class GiftFilterDao {
 
         query.where(predicate);
 
-        //ordering according to sort param
         orderBy(query, builder, giftRoot, entityPage);
 
-        // getting results
         TypedQuery<GiftCertificate> typedQuery = em.createQuery(query);
-        // Count total records
         totalRecords = typedQuery.getResultList().size();
-        // setting page number and size
         typedQuery.setFirstResult((entityPage.getPage() - 1) * entityPage.getSize());
         typedQuery.setMaxResults(entityPage.getSize());
         entityList = typedQuery.getResultList();
@@ -108,7 +104,6 @@ public class GiftFilterDao {
                             "%" + searchCriteria.getDescription() + "%")
             );
         }
-        // 13.32 -> 13 ; [10999 - 11000]
         if (Objects.nonNull(searchCriteria.getPrice())) {
             predicates.add(
                     builder.like(root.get("price"),
@@ -121,7 +116,6 @@ public class GiftFilterDao {
                             searchCriteria.getDuration())
             );
         }
-        // 2022 ->
         if (Objects.nonNull(searchCriteria.getCreateDate())) {
             String create_date = searchCriteria.getCreateDate();
             Expression<String> dateStringExpr =
@@ -144,9 +138,6 @@ public class GiftFilterDao {
                     builder.like(
                             builder.lower(dateStringExpr), "%" + create_date.toLowerCase() + "%"));
         }
-        // tag_name = tag_1
-        // tag_name = tag_1,tag_2
-        //
         if (Objects.nonNull(searchCriteria.getTagName())) {
             String tag_name = searchCriteria.getTagName();
             if (tag_name.contains(",")) {

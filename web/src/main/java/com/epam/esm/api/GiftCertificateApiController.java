@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @AllArgsConstructor
-@RequestMapping("/giftcertificates")
+@RequestMapping("/api/certificates")
 public class GiftCertificateApiController {
     private final GiftCertificateService giftService;
     private final HateoasAdder<GiftCertificateDto> hateoasAdder;
@@ -71,7 +71,7 @@ public class GiftCertificateApiController {
      * @param giftCertificateDto is id of object which is getting
      * @return GiftCertificateDto entity is inserted
      */
-    @PostMapping("/insert")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public GiftCertificateDto insert(@RequestBody GiftCertificateDto giftCertificateDto) {
         GiftCertificateDto giftDto = giftService.insert(giftCertificateDto);
@@ -85,7 +85,7 @@ public class GiftCertificateApiController {
      * @param giftCertificateDto is object which is should updated
      * @return GiftCertificateDto which is updated
      */
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/{id}")
     public GiftCertificateDto update(@PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
         GiftCertificateDto giftDto = giftService.update(id, giftCertificateDto);
         hateoasAdder.addFullLinks(giftDto);
@@ -98,7 +98,7 @@ public class GiftCertificateApiController {
      * @param id it is id of object which is getting
      * @return id of entity is found
      */
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public @ResponseBody SuccessResponse deleteById(@PathVariable long id) {
         boolean success = giftService.deleteById(id);
         String message = success ? "Object was successfully deleted" : "Object cannot be deleted";

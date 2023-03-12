@@ -1,5 +1,13 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.entity.User;
+import com.epam.esm.entity.creteria.EntityPage;
+import com.epam.esm.mapper.UserConvert;
+import com.epam.esm.pagination.Page;
+import com.epam.esm.pagination.PaginationResult;
+import com.epam.esm.repository.OrderDao;
+import com.epam.esm.repository.UserDao;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,7 +38,7 @@ class UserServiceImplTest {
     @Test
     void getAll() {
         EntityPage entityPage = new EntityPage(0, 2);
-        when(userDao.list(entityPage)).thenReturn(createPaginateResult());
+        when(userDao.findAll(entityPage)).thenReturn(createPaginateResult());
 
         PaginationResult<User> actual = converter(userService.getAll(entityPage));
         PaginationResult<User> expected = createPaginateResult();
@@ -39,7 +47,7 @@ class UserServiceImplTest {
 
     @Test
     void getById() {
-        when(userDao.getById(USER_1.getId())).thenReturn(Optional.of(USER_1));
+        when(userDao.findById(USER_1.getId())).thenReturn(Optional.of(USER_1));
 
         User actual = UserConvert.toEntity(userService.getById(USER_1.getId()));
         assertEquals(USER_1, actual);

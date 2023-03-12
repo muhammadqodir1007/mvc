@@ -54,6 +54,14 @@ public class GiftCertificate {
         setLastUpdateTime(LocalDateTime.now());
     }
 
+
+    public GiftCertificate(String name, String description, BigDecimal price, int duration) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+    }
+
     @PreUpdate
     public void onPreUpdate() {
         setLastUpdateTime(LocalDateTime.now());

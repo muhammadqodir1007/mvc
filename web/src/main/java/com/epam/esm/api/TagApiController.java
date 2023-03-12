@@ -77,7 +77,7 @@ public class TagApiController {
      * @param tagDto TagDto is object which should get from request
      * @return id of new object which is created in db
      */
-    @PostMapping("/insert")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TagDto insert(@RequestBody TagDto tagDto) {
         TagDto savedTag = tagService.insert(tagDto);
@@ -91,7 +91,7 @@ public class TagApiController {
      * @param id Id of object is being deleted
      * @return int is id of object
      */
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public SuccessResponse deleteById(@PathVariable long id) {
         boolean success = tagService.deleteById(id);
         return new SuccessResponse(success, "Object was successfully deleted (id = " + id + " )");

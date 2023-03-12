@@ -1,5 +1,12 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.creteria.EntityPage;
+import com.epam.esm.mapper.TagConverter;
+import com.epam.esm.pagination.Page;
+import com.epam.esm.pagination.PaginationResult;
+import com.epam.esm.repository.impl.TagDaoImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +36,7 @@ class TagServiceImplTest {
 
     @Test
     void getByName() {
-        when(tagDao.getByName("tag_2")).thenReturn(Optional.of(TAG_2));
+        when(tagDao.findByName("tag_2")).thenReturn(Optional.of(TAG_2));
 
         Tag actual = TagConverter.toEntity(tagService.getByName("tag_2"));
         assertEquals(TAG_2, actual);
@@ -37,7 +44,7 @@ class TagServiceImplTest {
 
     @Test
     public void getById_test() {
-        when(tagDao.getById(TAG_1.getId())).thenReturn(Optional.of(TAG_1));
+        when(tagDao.findById(TAG_1.getId())).thenReturn(Optional.of(TAG_1));
         Tag actual = TagConverter.toEntity(tagService.getById(TAG_1.getId()));
         assertEquals(TAG_1, actual);
     }
@@ -45,7 +52,7 @@ class TagServiceImplTest {
     @Test
     public void getAllTest() {
         EntityPage page = new EntityPage(0, 2);
-        when(tagDao.list(page)).thenReturn(createPaginateResult());
+        when(tagDao.findAll(page)).thenReturn(createPaginateResult());
         PaginationResult<Tag> actual = converter(tagService.getAll(page));
         PaginationResult<Tag> expected = createPaginateResult();
         assertEquals(expected, actual);
@@ -64,7 +71,7 @@ class TagServiceImplTest {
 
     @Test
     void delete_test() {
-        when(tagDao.getById(3L)).thenReturn(Optional.of(TAG_3));
+        when(tagDao.findById(3L)).thenReturn(Optional.of(TAG_3));
         when(tagDao.remove(TAG_3)).thenReturn(true);
 
         boolean success = tagService.deleteById(3L);

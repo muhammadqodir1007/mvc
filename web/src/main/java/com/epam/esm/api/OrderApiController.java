@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 public class OrderApiController {
 
     private final OrderService orderService;

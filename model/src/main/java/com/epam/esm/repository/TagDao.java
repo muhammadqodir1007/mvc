@@ -5,9 +5,10 @@ import com.epam.esm.entity.Tag;
 import java.util.Optional;
 
 public interface TagDao extends BasicDao<Tag> {
-    Optional<Tag> getByName(String name);
+    Optional<Tag> findByName(String name);
 
     void deleteRemovedTag(long id);
 
-    Optional<Tag> getTopUsedWithHighestCostOfOrder(long userId);
+    Optional<Tag> findTopUsedWithHighestCostOfOrder(long userId);
 }
+

@@ -24,7 +24,7 @@ public class UserDaoImpl extends PaginationDao<User> implements UserDao {
     }
 
     @Override
-    public Optional<User> getById(long id) {
+    public Optional<User> findById(long id) {
         return Optional.ofNullable(entityManager.find(User.class, id));
     }
 

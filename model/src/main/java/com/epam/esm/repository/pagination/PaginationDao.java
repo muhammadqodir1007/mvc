@@ -24,7 +24,7 @@ public abstract class PaginationDao<T> {
         this.entity = entity;
     }
 
-    public PaginationResult<T> list(EntityPage page) {
+    public PaginationResult<T> findAll(EntityPage page) {
         int lastPageNumber;
         Long totalRecords;
         List<T> entityList;

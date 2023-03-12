@@ -12,9 +12,9 @@ import java.util.Optional;
  * @param <T> the type parameter
  */
 public interface BasicDao<T> {
-    PaginationResult<T> list(EntityPage entityPage);
+    PaginationResult<T> findAll(EntityPage entityPage);
 
-    Optional<T> getById(long id);
+    Optional<T> findById(long id);
 
     T insert(T object);
 

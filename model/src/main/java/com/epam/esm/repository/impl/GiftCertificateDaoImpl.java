@@ -24,7 +24,7 @@ public class GiftCertificateDaoImpl extends PaginationDao<GiftCertificate> imple
 
 
     @Override
-    public Optional<GiftCertificate> getById(long id) {
+    public Optional<GiftCertificate> findById(long id) {
         return Optional.ofNullable(entityManager.find(GiftCertificate.class, id));
     }
 
@@ -49,21 +49,24 @@ public class GiftCertificateDaoImpl extends PaginationDao<GiftCertificate> imple
 
     @Override
     public void deleteFromTag(long id) {
-        entityManager.createNativeQuery("DELETE FROM gift_certificates_tags WHERE gift_certificate_id=:gift_certificate_id")
-                .setParameter("gift_certificate_id", id)
+        entityManager.createNativeQuery("DELETE FROM gift_certificates_tags" +
+                        " WHERE gift_certificate_id=:giftCertificateId")
+                .setParameter("giftCertificateId", id)
                 .executeUpdate();
     }
 
     @Override
     public void deleteFromOrder(long id) {
-        entityManager.createNativeQuery("DELETE FROM orders_gift_certificates WHERE gift_certificate_id=:gift_certificate_id")
-                .setParameter("gift_certificate_id", id)
+        entityManager.createNativeQuery("DELETE FROM orders_gift_certificates " +
+                        "WHERE gift_certificate_id=:giftCertificateId")
+                .setParameter("giftCertificateId", id)
                 .executeUpdate();
     }
 
     @Override
-    public Optional<GiftCertificate> getByName(String name) {
-        return entityManager.createQuery("select g from GiftCertificate g where g.name = :name", GiftCertificate.class)
+    public Optional<GiftCertificate> findByName(String name) {
+        return entityManager.createQuery("select g from GiftCertificate g where g.name = :name",
+                        GiftCertificate.class)
                 .setParameter("name", name)
                 .getResultList()
                 .stream().findFirst();

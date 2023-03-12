@@ -1,5 +1,20 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
+import com.epam.esm.entity.creteria.EntityPage;
+import com.epam.esm.mapper.GiftConverter;
+import com.epam.esm.mapper.OrderConvert;
+import com.epam.esm.pagination.Page;
+import com.epam.esm.pagination.PaginationResult;
+import com.epam.esm.repository.GiftCertificateDao;
+import com.epam.esm.repository.OrderDao;
+import com.epam.esm.repository.UserDao;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,7 +59,7 @@ class OrderServiceImplTest {
     @Test
     void getAll() {
         EntityPage entityPage = new EntityPage(0, 2);
-        when(orderDao.list(entityPage)).thenReturn(createPaginateResult());
+        when(orderDao.findAll(entityPage)).thenReturn(createPaginateResult());
 
         PaginationResult<Order> actual = converter(orderService.getAll(entityPage));
         PaginationResult<Order> expected = createPaginateResult();
@@ -53,20 +68,20 @@ class OrderServiceImplTest {
 
     @Test
     void getById() {
-        when(orderDao.getById(ORDER_1.getId())).thenReturn(Optional.of(ORDER_1));
-        when(userDao.getById(USER_1.getId())).thenReturn(Optional.of(USER_1));
+        when(orderDao.findById(ORDER_1.getId())).thenReturn(Optional.of(ORDER_1));
+        when(userDao.findById(USER_1.getId())).thenReturn(Optional.of(USER_1));
 
         OrderDto actualDto = orderService.getById(ORDER_1.getId());
         Order actual = OrderConvert.toEntity(actualDto);
 
-        actual.setUser(userDao.getById(actualDto.getUser_id()).get());
+        actual.setUser(userDao.findById(actualDto.getUserId()).get());
         assertEquals(ORDER_1, actual);
     }
 
     @Test
     void insert() {
-        when(userDao.getById(USER_1.getId())).thenReturn(Optional.of(USER_1));
-        when(giftDao.getById(2)).thenReturn(Optional.of(GIFT_CERTIFICATE_2));
+        when(userDao.findById(USER_1.getId())).thenReturn(Optional.of(USER_1));
+        when(giftDao.findById(2)).thenReturn(Optional.of(GIFT_CERTIFICATE_2));
         when(orderDao.insert(ORDER_21)).thenReturn(ORDER_2);
         OrderDto actual = orderService.insert(ORDER_22);
 
@@ -75,8 +90,8 @@ class OrderServiceImplTest {
 
     @Test
     void saveByUser() {
-        when(userDao.getById(USER_1.getId())).thenReturn(Optional.of(USER_1));
-        when(giftDao.getById(2)).thenReturn(Optional.of(GIFT_CERTIFICATE_2));
+        when(userDao.findById(USER_1.getId())).thenReturn(Optional.of(USER_1));
+        when(giftDao.findById(2)).thenReturn(Optional.of(GIFT_CERTIFICATE_2));
         when(orderDao.insert(ORDER_21)).thenReturn(ORDER_2);
         UserDto userDto = orderService.saveByUser(1, List.of(new GiftCertificateDto(2)));
         User actual = new User(userDto.getId(), userDto.getName());
@@ -87,7 +102,7 @@ class OrderServiceImplTest {
     @Test
     void getOrderByUser() {
         EntityPage entityPage = new EntityPage(0, 2);
-        when(orderDao.getOrdersByUser(USER_1.getId(), entityPage)).thenReturn(createPaginateResult());
+        when(orderDao.findOrdersByUser(USER_1.getId(), entityPage)).thenReturn(createPaginateResult());
 
         PaginationResult<OrderDto> actual = orderService.getOrderByUser(USER_1.getId(), entityPage);
         assertEquals(createExpectedResult(), actual);

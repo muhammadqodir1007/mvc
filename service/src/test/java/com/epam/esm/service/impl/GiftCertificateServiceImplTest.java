@@ -1,5 +1,16 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.creteria.EntityPage;
+import com.epam.esm.entity.creteria.GiftSearchCriteria;
+import com.epam.esm.mapper.GiftConverter;
+import com.epam.esm.pagination.Page;
+import com.epam.esm.pagination.PaginationResult;
+import com.epam.esm.repository.impl.GiftCertificateDaoImpl;
+import com.epam.esm.repository.impl.TagDaoImpl;
+import com.epam.esm.repository.search.GiftSearchDao;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -56,7 +67,7 @@ class GiftCertificateServiceImplTest {
     @Mock
     private GiftCertificateDaoImpl giftDao = Mockito.mock(GiftCertificateDaoImpl.class);
     @Mock
-    private GiftFilterDao giftFilterDao = Mockito.mock(GiftFilterDao.class);
+    private GiftSearchDao giftSearchDao = Mockito.mock(GiftSearchDao.class);
     @Mock
     private TagDaoImpl tagDao = Mockito.mock(TagDaoImpl.class);
     @InjectMocks
@@ -64,7 +75,7 @@ class GiftCertificateServiceImplTest {
 
     @Test
     public void getById_test() {
-        when(giftDao.getById(GIFT_CERTIFICATE_1.getId())).thenReturn(Optional.of(GIFT_CERTIFICATE_1));
+        when(giftDao.findById(GIFT_CERTIFICATE_1.getId())).thenReturn(Optional.of(GIFT_CERTIFICATE_1));
         GiftCertificate actual = GiftConverter.toEntity(giftService.getById(GIFT_CERTIFICATE_1.getId()));
 
         assertEquals(GIFT_CERTIFICATE_1, actual);
@@ -73,7 +84,7 @@ class GiftCertificateServiceImplTest {
     @Test
     public void getAllTest() {
         EntityPage entityPage = new EntityPage(0, 2);
-        when(giftDao.list(entityPage)).thenReturn(createPaginateResult());
+        when(giftDao.findAll(entityPage)).thenReturn(createPaginateResult());
 
         PaginationResult<GiftCertificate> actual = converter(giftService.getAll(entityPage));
         PaginationResult<GiftCertificate> expected = createPaginateResult();
@@ -84,7 +95,7 @@ class GiftCertificateServiceImplTest {
     public void update_test() {
         GiftCertificateDto giftDto = GiftConverter.toDto(GIFT_CERTIFICATE_41);
         long id = 1;
-        when(giftDao.getById(id)).thenReturn(Optional.of(GIFT_CERTIFICATE_4));
+        when(giftDao.findById(id)).thenReturn(Optional.of(GIFT_CERTIFICATE_4));
         when(giftDao.update(GIFT_CERTIFICATE_42)).thenReturn(GIFT_CERTIFICATE_42);
 
         GiftCertificate actual = GiftConverter.toEntity(giftService.update(id, giftDto));
@@ -96,8 +107,8 @@ class GiftCertificateServiceImplTest {
     public void insert_test() {
 
         GIFT_CERTIFICATE_31.setTags(createReqTagsWithIds());
-        when(tagDao.getByName("tag_1")).thenReturn(Optional.of(TAG_1));
-        when(tagDao.getByName("tag_100")).thenReturn(Optional.empty());
+        when(tagDao.findByName("tag_1")).thenReturn(Optional.of(TAG_1));
+        when(tagDao.findByName("tag_100")).thenReturn(Optional.empty());
         when(giftDao.insert(GIFT_CERTIFICATE_31)).thenReturn(GIFT_CERTIFICATE_3);
 
         GiftCertificateDto reqGift = GiftConverter.toDto(GIFT_CERTIFICATE_31);
@@ -111,7 +122,7 @@ class GiftCertificateServiceImplTest {
         EntityPage page = new EntityPage();
         GiftSearchCriteria giftSearchCriteria = new GiftSearchCriteria(
                 "ift", "For", null, null, null, null, null);
-        when(giftFilterDao.findAllWithFilters(giftSearchCriteria, page)).thenReturn(createPaginateResult());
+        when(giftSearchDao.findAllWithParams(giftSearchCriteria, page)).thenReturn(createPaginateResult());
 
         PaginationResult<GiftCertificateDto> actualDto = giftService.getWithFilter(giftSearchCriteria, page);
         PaginationResult<GiftCertificate> actual = converter(actualDto);
@@ -120,7 +131,7 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void delete_test() {
-        when(giftDao.getById(2)).thenReturn(Optional.of(GIFT_CERTIFICATE_2));
+        when(giftDao.findById(2)).thenReturn(Optional.of(GIFT_CERTIFICATE_2));
         when(giftDao.remove(GIFT_CERTIFICATE_2)).thenReturn(true);
 
         boolean success = giftService.deleteById(2L);

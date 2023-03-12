@@ -1,5 +1,6 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.validation.text.ValidName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UserDto extends RepresentationModel<UserDto> {
     private long id;
+    @ValidName
     private String name;
     private List<OrderDto> orders;
 

@@ -26,7 +26,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public PaginationResult<TagDto> getAll(EntityPage entityPage) {
 
-        PaginationResult<Tag> tagList = tagDao.list(entityPage);
+        PaginationResult<Tag> tagList = tagDao.findAll(entityPage);
         if (entityPage.getPage() == 1 && tagList.getRecords().isEmpty()) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND"));
         }
@@ -47,7 +47,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto getById(long id) {
-        Optional<Tag> tag = tagDao.getById(id);
+        Optional<Tag> tag = tagDao.findById(id);
         if (tag.isEmpty()) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + id);
         }
@@ -56,7 +56,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto getByName(String name) {
-        Optional<Tag> tag = tagDao.getByName(name);
+        Optional<Tag> tag = tagDao.findByName(name);
         if (tag.isEmpty()) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_NAME") + name);
         }
@@ -65,7 +65,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto getTopUsedOfUser(long userId) {
-        Optional<Tag> optionalTag = tagDao.getTopUsedWithHighestCostOfOrder(userId);
+        Optional<Tag> optionalTag = tagDao.findTopUsedWithHighestCostOfOrder(userId);
         if (optionalTag.isEmpty()) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + userId);
         }
@@ -74,7 +74,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto insert(TagDto tagDto) {
-        Optional<Tag> tag = tagDao.getByName(tagDto.getName());
+        Optional<Tag> tag = tagDao.findByName(tagDto.getName());
         if (tag.isPresent()) {
             throw new DuplicateEntityException();
         }
@@ -84,7 +84,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public boolean deleteById(long id) {
-        Optional<Tag> tag = tagDao.getById(id);
+        Optional<Tag> tag = tagDao.findById(id);
         if (tag.isEmpty()) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + id);
         }

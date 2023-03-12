@@ -37,13 +37,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PaginationResult<OrderDto> getAll(EntityPage entityPage) {
-        PaginationResult<Order> orderList = orderDao.list(entityPage);
+        PaginationResult<Order> orderList = orderDao.findAll(entityPage);
         return converter(orderList, entityPage);
     }
 
     @Override
     public OrderDto getById(long id) {
-        Optional<Order> optionalOrder = orderDao.getById(id);
+        Optional<Order> optionalOrder = orderDao.findById(id);
         if (optionalOrder.isEmpty()) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + id);
         }
@@ -52,18 +52,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto insert(OrderDto orderDto) {
-        if (orderDto.getGift_certificates() == null) {
+        if (orderDto.getGiftCertificateDtos() == null) {
             throw new IllegalArgumentException(MessageByLang.getMessage("GIFT_CERTIFICATES_NOT_ENTERED"));
         }
         Order order = new Order();
-        Optional<User> savedUser = userDao.getById(orderDto.getUserId());
+        Optional<User> savedUser = userDao.findById(orderDto.getUserId());
         if (savedUser.isEmpty()) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + orderDto.getUserId());
         }
         List<GiftCertificate> reqGiftList = new ArrayList<>();
         BigDecimal price = BigDecimal.valueOf(0);
-        for (GiftCertificateDto giftDto : orderDto.getGift_certificates()) {
-            Optional<GiftCertificate> savedGift = giftDao.getById(giftDto.getId());
+        for (GiftCertificateDto giftDto : orderDto.getGiftCertificateDtos()) {
+            Optional<GiftCertificate> savedGift = giftDao.findById(giftDto.getId());
             if (savedGift.isEmpty()) {
                 throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + giftDto.getId());
             }
@@ -86,9 +86,9 @@ public class OrderServiceImpl implements OrderService {
     public UserDto saveByUser(long userId, List<GiftCertificateDto> giftDtos) {
         OrderDto orderDto = new OrderDto();
         orderDto.setUserId(userId);
-        orderDto.setGift_certificates(giftDtos);
+        orderDto.setGiftCertificateDtos(giftDtos);
         insert(orderDto);
-        Optional<User> optionalUser = userDao.getById(userId);
+        Optional<User> optionalUser = userDao.findById(userId);
         if (optionalUser.isEmpty()) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + userId);
         }
@@ -97,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PaginationResult<OrderDto> getOrderByUser(long userId, EntityPage entityPage) {
-        PaginationResult<Order> orderList = orderDao.getOrdersByUser(userId, entityPage);
+        PaginationResult<Order> orderList = orderDao.findOrdersByUser(userId, entityPage);
         return converter(orderList, entityPage);
     }
 

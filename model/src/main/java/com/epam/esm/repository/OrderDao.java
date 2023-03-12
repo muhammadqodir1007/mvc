@@ -5,5 +5,5 @@ import com.epam.esm.entity.creteria.EntityPage;
 import com.epam.esm.pagination.PaginationResult;
 
 public interface OrderDao extends BasicDao<Order> {
-    PaginationResult<Order> getOrdersByUser(long userId, EntityPage entityPage);
+    PaginationResult<Order> findOrdersByUser(long userId, EntityPage entityPage);
 }

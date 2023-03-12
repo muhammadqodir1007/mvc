@@ -11,6 +11,6 @@ public interface GiftCertificateDao extends BasicDao<GiftCertificate> {
 
     void deleteFromOrder(long id);
 
-    Optional<GiftCertificate> getByName(String name);
+    Optional<GiftCertificate> findByName(String name);
 
 }

@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PaginationResult<UserDto> getAll(EntityPage entityPage) {
-        PaginationResult<User> userList = userDao.list(entityPage);
+        PaginationResult<User> userList = userDao.findAll(entityPage);
         if (entityPage.getPage() == 1 && userList.getRecords().isEmpty()) {
             throw new ResourceNotFoundException("Resource not found");
         }
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getById(long id) {
-        Optional<User> optionalUser = userDao.getById(id);
+        Optional<User> optionalUser = userDao.findById(id);
         if (optionalUser.isEmpty()) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + id);
         }

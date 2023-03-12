@@ -16,13 +16,13 @@ public class OrderConvert {
         OrderDto orderDto = new OrderDto();
         orderDto.setId(order.getId());
         orderDto.setPrice(order.getPrice());
-        orderDto.setCreate_date(order.getCreateDate().toString());
+        orderDto.setCreateDate(order.getCreateDate().toString());
         if (order.getGiftCertificates() != null) {
             List<GiftCertificateDto> giftDtos = order.getGiftCertificates()
                     .stream()
                     .map(GiftConverter::toDto)
                     .collect(Collectors.toList());
-            orderDto.setGift_certificates(giftDtos);
+            orderDto.setGiftCertificateDtos(giftDtos);
         }
         if (order.getUser() != null) {
             orderDto.setUserId(order.getUser().getId());
@@ -34,9 +34,9 @@ public class OrderConvert {
         Order order = new Order();
         order.setId(orderDto.getId());
         order.setPrice(orderDto.getPrice());
-        order.setCreateDate(LocalDateTime.parse(orderDto.getCreate_date()));
-        if (orderDto.getGift_certificates() != null) {
-            List<GiftCertificate> giftList = orderDto.getGift_certificates()
+        order.setCreateDate(LocalDateTime.parse(orderDto.getCreateDate()));
+        if (orderDto.getGiftCertificateDtos() != null) {
+            List<GiftCertificate> giftList = orderDto.getGiftCertificateDtos()
                     .stream()
                     .map(GiftConverter::toEntity)
                     .collect(Collectors.toList());

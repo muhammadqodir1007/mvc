@@ -26,7 +26,7 @@ public class OrderHateoasAdderImpl implements HateoasAdder<OrderDto> {
         orderDto.add(linkTo(methodOn(ORDER_CONTROLLER)
                 .getById(orderDto.getId())).withRel("self"));
 
-        for (GiftCertificateDto gift_certificate : orderDto.getGift_certificates()) {
+        for (GiftCertificateDto gift_certificate : orderDto.getGiftCertificateDtos()) {
             gift_certificate.add(linkTo(methodOn(GIFT_CONTROLLER)
                     .getById(gift_certificate.getId())).withRel("self gift certificate"));
             if (gift_certificate.getTags() != null) {

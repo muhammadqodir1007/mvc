@@ -1,5 +1,6 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.validation.number.ValidPrice;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -12,10 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderDto extends RepresentationModel<OrderDto> {
     private long id;
+    @ValidPrice
     private BigDecimal price;
-    private String create_date;
+    private String createDate;
     private long userId;
-    private List<GiftCertificateDto> gift_certificates;
+    private List<GiftCertificateDto> giftCertificateDtos;
 
     public OrderDto(long id, BigDecimal price) {
         this.id = id;
@@ -25,6 +27,6 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     public OrderDto(int i, List<GiftCertificateDto> giftCertificateDtos) {
 
         this.id=i;
-        this.gift_certificates=giftCertificateDtos;
+        this.giftCertificateDtos =giftCertificateDtos;
     }
 }

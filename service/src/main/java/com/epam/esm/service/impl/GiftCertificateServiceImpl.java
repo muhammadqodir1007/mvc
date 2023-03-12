@@ -13,7 +13,7 @@ import com.epam.esm.pagination.Page;
 import com.epam.esm.pagination.PaginationResult;
 import com.epam.esm.repository.GiftCertificateDao;
 import com.epam.esm.repository.TagDao;
-import com.epam.esm.repository.filter.GiftFilterDao;
+import com.epam.esm.repository.search.GiftSearchDao;
 import com.epam.esm.service.GiftCertificateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,17 +26,17 @@ import java.util.stream.Collectors;
 public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateDao giftDoa;
     private final TagDao tagDao;
-    private final GiftFilterDao giftFilterDao;
+    private final GiftSearchDao giftSearchDao;
 
     @Override
     public PaginationResult<GiftCertificateDto> getAll(EntityPage entityPage) {
-        PaginationResult<GiftCertificate> giftList = giftDoa.list(entityPage);
+        PaginationResult<GiftCertificate> giftList = giftDoa.findAll(entityPage);
         return getGiftCertificateDtoPaginationResult(entityPage, giftList);
     }
 
     @Override
     public GiftCertificateDto getById(long id) {
-        Optional<GiftCertificate> g = giftDoa.getById(id);
+        Optional<GiftCertificate> g = giftDoa.findById(id);
         if (g.isEmpty()) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + id);
         }
@@ -48,6 +48,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         GiftCertificate giftCertificate;
         giftCertificate = GiftConverter.toEntity(giftCertificateDto);
 
+        Optional<GiftCertificate> savedGift = giftDoa.findByName(giftCertificateDto.getName());
+        if (savedGift.isPresent()) {
+            throw new DuplicateEntityException();
+        }
+
         Set<Tag> requestTags = giftCertificate.getTags();
         Set<Tag> reqTagsWithIds = checkTags(requestTags);
         giftCertificate.setTags(reqTagsWithIds);
@@ -57,11 +62,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public GiftCertificateDto update(long id, GiftCertificateDto newGiftDto) {
 
-        Optional<GiftCertificate> oldGift = giftDoa.getById(id);
+        Optional<GiftCertificate> oldGift = giftDoa.findById(id);
         if (oldGift.isEmpty() || Objects.isNull(newGiftDto)) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + id);
         }
-        Optional<GiftCertificate> savedGift = giftDoa.getByName(newGiftDto.getName());
+        Optional<GiftCertificate> savedGift = giftDoa.findByName(newGiftDto.getName());
         if (savedGift.isPresent()) {
             throw new DuplicateEntityException();
         }
@@ -77,7 +82,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public boolean deleteById(long id) {
-        Optional<GiftCertificate> g = giftDoa.getById(id);
+        Optional<GiftCertificate> g = giftDoa.findById(id);
         if (g.isEmpty()) {
             throw new ResourceNotFoundException(MessageByLang.getMessage("RESOURCE_NOT_FOUND_WITH_ID") + id);
         }
@@ -86,7 +91,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public PaginationResult<GiftCertificateDto> getWithFilter(GiftSearchCriteria searchCriteria, EntityPage entityPage) {
-        PaginationResult<GiftCertificate> giftList = giftFilterDao.findAllWithFilters(searchCriteria, entityPage);
+        PaginationResult<GiftCertificate> giftList = giftSearchDao.findAllWithParams(searchCriteria, entityPage);
         return getGiftCertificateDtoPaginationResult(entityPage, giftList);
     }
 
@@ -104,7 +109,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             return null;
         }
         for (Tag requestTag : requestTags) {
-            Optional<Tag> optionalTag = tagDao.getByName(requestTag.getName());
+            Optional<Tag> optionalTag = tagDao.findByName(requestTag.getName());
             if (optionalTag.isPresent()) {
                 reqTagWithIds.add(optionalTag.get());
             } else reqTagWithIds.add(requestTag);

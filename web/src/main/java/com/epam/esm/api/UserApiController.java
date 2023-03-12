@@ -101,7 +101,7 @@ public class UserApiController {
      */
     @PostMapping("/{id}/order")
     public ResponseEntity<UserDto> saveOrder(@PathVariable long id, @RequestBody OrderDto orderDto) {
-        UserDto userDto = orderService.saveByUser(id, orderDto.getGift_certificates());
+        UserDto userDto = orderService.saveByUser(id, orderDto.getGiftCertificateDtos());
         hateoasAdder.addFullLinks(userDto);
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
